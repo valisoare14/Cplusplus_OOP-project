@@ -1,5 +1,10 @@
-# c-OOP-project
+# C-OOP-project
 Aplicatie de tip consola in C++, care permite gestiunea profilelor senzorilor dintr-un sistem IoT(Internet of Things)
+
+# tehnologii folosite:
+- C language
+- OOP (Object Oriented Programming)
+  
 
 /*
 Indicatorii masurati:
