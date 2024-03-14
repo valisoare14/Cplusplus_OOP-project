@@ -2,7 +2,7 @@
 Aplicatie de tip consola in C++, care permite gestiunea profilelor senzorilor dintr-un sistem IoT(Internet of Things)
 
 # tehnologii folosite:
-- C language
+- C++ language
 - OOP (Object Oriented Programming)
   
 
