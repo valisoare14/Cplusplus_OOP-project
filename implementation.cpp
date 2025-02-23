@@ -1,1231 +1,1271 @@
-#include<iostream>
-#include<string>
-#include<fstream>
-#include<list>
-
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <list>
 
 using namespace std;
 
+// The "Operators" template class
 template<typename T>
-class Operatori {
+class Operators {
 private:
-	int marimeVector;
-	T* vector;
+    int vectorSize;
+    T* vect;
 public:
-	//getteri
-	int getmarimeVector() {
-		return this->marimeVector;
-	}
-	T getvector() {
-		if (this->vector != nullptr)
-			return this->vector;
-		else
-			throw new exception("Vector nul");
-	}
-	//setteri
-	void setmarimeVector(int marimeVector) {
-		if (marimeVector > 0) {
-			if (marimeVector < this->marimeVector) {
-				T* senzornou;
-				senzornou = new T[this->numarSenzori];
-				for (int i = 0; i < this->marimeVector; i++) {
-					senzornou[i] = this->vector[i];
-				}
-				delete[]this->vector;
-				this->marimeVector = marimeVector;
-				this->vector = new T[marimeVector];
-				for (int i = 0; i < marimeVector; i++) {
-					this->vector[i] = senzornou[i];
-				}
-				delete[]senzornou;
-			}
-			else if (marimeVector > this->marimeVector) {
-				T* senzornou;
-				senzornou = new T[this->marimeVector];
-				for (int i = 0; i < this->marimeVector; i++) {
-					senzornou[i] = this->vector[i];
-				}
-				delete[]this->vector;
-				this->vector = new T[marimeVector];
-				for (int i = 0; i < this->marimeVector; i++) {
-					this->vector[i] = senzornou[i];
-				}
-				this->marimeVector = marimeVector;
-				delete[]senzornou;
-			}
-			else
-				throw new exception("Vectorul deja contine aceasta dimensiune !");
-		}
-		else
-			throw new exception("Introduceti o marime pozitiva !");
-	}
-	void setvector(T* vector) {
-		if (vector != nullptr)
-			this->vector = vector;
-		else
-			throw new exception("Introduceti un pointer nenul !");
-	}
-	Operatori() {
-		vector = nullptr;
-		marimeVector = 0;
-	}
-	Operatori(int marimeVector, T* vector) {
-		if (marimeVector <= 0)
-			throw new exception("Introduceti o marime pozitiva !");
-		if (vector == nullptr)
-			throw new exception("Introduceti un pointer nenul !");
-		this->marimeVector = marimeVector;
-		this->vector = new T[marimeVector];
-		for (int i = 0; i < this->marimeVector; i++) {
-			this->vector[i] = vector[i];
-		}
-	}
-	Operatori(const Operatori& operatori) {
-		this->marimeVector = operatori.marimeVector;
-		this->vector = new T[operatori.marimeVector];
-		for (int i = 0; i < this->marimeVector; i++) {
-			this->vector[i] = operatori.vector[i];
-		}
-	}
-	friend ostream& operator<<(ostream& scriere, const Operatori& operatori) {
-		scriere << "Marime vector : " << operatori.marimeVector << endl;
-		for (int i = 0; i < operatori.marimeVector; i++) {
-			scriere << operatori.vector[i];
-		}
-		return scriere;
-	}
-	friend istream& operator>>(istream& citire, Operatori& operatori) {
-		cout << "Introduceti marime vector : "; citire >> operatori.marimeVector;
-		for (int i = 0; i < operatori.marimeVector; i++) {
-			cout << "Introduceti elementul " << i << " din vector:" << endl;
-			citire >> operatori.vector[i];
-		}
-		return citire;
-	}
-	Operatori operator=(const Operatori& operatori) {
-		this->marimeVector = operatori.marimeVector;
-		if (this->vector != nullptr)
-			delete[]this->vector;
-		this->vector = new T[this->marimeVector];
-		for (int i = 0; i < this->marimeVector; i++) {
-			this->vector[i] = operatori.vector[i];
-		}
-		return *this;
-	}
-	Operatori operator+(const Operatori& operatori) {
-		if (this->marimeVector >= operatori.marimeVector) {
-			Operatori o = *this;
-			for (int i = 0; i < operatori.marimeVector; i++) {
-				o.vector[i] = this->vector[i] + operatori.vector[i];
-			}
-			return o;
-		}
-		else if (this->marimeVector < operatori.marimeVector) {
-			Operatori o = operatori;
-			for (int i = 0; i < this->marimeVector; i++) {
-				o.vector[i] = operatori.vector[i] + this->vector[i];
-			}
-			return o;
-		}
-	}
-	Operatori operator-(const Operatori& operatori) {
-		if (this->marimeVector >= operatori.marimeVector) {
-			Operatori o = *this;
-			for (int i = 0; i < operatori.marimeVector; i++) {
-				o.vector[i] = this->vector[i] - operatori.vector[i];
-			}
-			return o;
-		}
-		else if (this->marimeVector < operatori.marimeVector) {
-			Operatori o = operatori;
-			for (int i = 0; i < this->marimeVector; i++) {
-				o.vector[i] = operatori.vector[i] - this->vector[i];
-			}
-			return o;
-		}
-	}
-	Operatori operator/(const Operatori& operatori) {
-		if (this->marimeVector >= operatori.marimeVector) {
-			Operatori o = *this;
-			for (int i = 0; i < operatori.marimeVector; i++) {
-				o.vector[i] = this->vector[i] / operatori.vector[i];
-			}
-			return o;
-		}
-		else if (this->marimeVector < operatori.marimeVector) {
-			Operatori o = operatori;
-			for (int i = 0; i < this->marimeVector; i++) {
-				o.vector[i] = operatori.vector[i] / this->vector[i];
-			}
-			return o;
-		}
-	}
-	Operatori operator++(int) {
-		Operatori operatori = *this;
-		for (int i = 0; i < this->marimeVector; i++) {
-			this->vector[i]++;
-		}
-		return operatori;
-	}
-	Operatori operator++() {
-		for (int i = 0; i < this->marimeVector; i++) {
-			this->vector[i]++;
-		}
-		return *this;
-	}
+    //getters
+    int getVectorSize() {
+        return this->vectorSize;
+    }
+    T getVect() {
+        if (this->vect != nullptr)
+            return this->vect;
+        else
+            throw new exception("Null vector");
+    }
+    //setters
+    void setVectorSize(int vectorSize) {
+        if (vectorSize > 0) {
+            if (vectorSize < this->vectorSize) {
+                T* newElements;
+                newElements = new T[this->vectorSize];
+                for (int i = 0; i < this->vectorSize; i++) {
+                    newElements[i] = this->vect[i];
+                }
+                delete[] this->vect;
+                this->vectorSize = vectorSize;
+                this->vect = new T[vectorSize];
+                for (int i = 0; i < vectorSize; i++) {
+                    this->vect[i] = newElements[i];
+                }
+                delete[] newElements;
+            }
+            else if (vectorSize > this->vectorSize) {
+                T* newElements;
+                newElements = new T[this->vectorSize];
+                for (int i = 0; i < this->vectorSize; i++) {
+                    newElements[i] = this->vect[i];
+                }
+                delete[] this->vect;
+                this->vect = new T[vectorSize];
+                for (int i = 0; i < this->vectorSize; i++) {
+                    this->vect[i] = newElements[i];
+                }
+                this->vectorSize = vectorSize;
+                delete[] newElements;
+            }
+            else
+                throw new exception("The vector already has this size!");
+        }
+        else
+            throw new exception("Please enter a positive size!");
+    }
+    void setVect(T* vect) {
+        if (vect != nullptr)
+            this->vect = vect;
+        else
+            throw new exception("Please provide a non-null pointer!");
+    }
+    Operators() {
+        vect = nullptr;
+        vectorSize = 0;
+    }
+    Operators(int vectorSize, T* vect) {
+        if (vectorSize <= 0)
+            throw new exception("Please enter a positive size!");
+        if (vect == nullptr)
+            throw new exception("Please provide a non-null pointer!");
+        this->vectorSize = vectorSize;
+        this->vect = new T[vectorSize];
+        for (int i = 0; i < this->vectorSize; i++) {
+            this->vect[i] = vect[i];
+        }
+    }
+    Operators(const Operators& operators) {
+        this->vectorSize = operators.vectorSize;
+        this->vect = new T[operators.vectorSize];
+        for (int i = 0; i < this->vectorSize; i++) {
+            this->vect[i] = operators.vect[i];
+        }
+    }
+    friend ostream& operator<<(ostream& out, const Operators& operators) {
+        out << "Vector size : " << operators.vectorSize << endl;
+        for (int i = 0; i < operators.vectorSize; i++) {
+            out << operators.vect[i];
+        }
+        return out;
+    }
+    friend istream& operator>>(istream& in, Operators& operators) {
+        cout << "Enter vector size : ";
+        in >> operators.vectorSize;
+        for (int i = 0; i < operators.vectorSize; i++) {
+            cout << "Enter element " << i << " of the vector:" << endl;
+            in >> operators.vect[i];
+        }
+        return in;
+    }
+    Operators operator=(const Operators& operators) {
+        this->vectorSize = operators.vectorSize;
+        if (this->vect != nullptr)
+            delete[] this->vect;
+        this->vect = new T[this->vectorSize];
+        for (int i = 0; i < this->vectorSize; i++) {
+            this->vect[i] = operators.vect[i];
+        }
+        return *this;
+    }
+    Operators operator+(const Operators& operators) {
+        if (this->vectorSize >= operators.vectorSize) {
+            Operators o = *this;
+            for (int i = 0; i < operators.vectorSize; i++) {
+                o.vect[i] = this->vect[i] + operators.vect[i];
+            }
+            return o;
+        }
+        else if (this->vectorSize < operators.vectorSize) {
+            Operators o = operators;
+            for (int i = 0; i < this->vectorSize; i++) {
+                o.vect[i] = operators.vect[i] + this->vect[i];
+            }
+            return o;
+        }
+    }
+    Operators operator-(const Operators& operators) {
+        if (this->vectorSize >= operators.vectorSize) {
+            Operators o = *this;
+            for (int i = 0; i < operators.vectorSize; i++) {
+                o.vect[i] = this->vect[i] - operators.vect[i];
+            }
+            return o;
+        }
+        else if (this->vectorSize < operators.vectorSize) {
+            Operators o = operators;
+            for (int i = 0; i < this->vectorSize; i++) {
+                o.vect[i] = operators.vect[i] - this->vect[i];
+            }
+            return o;
+        }
+    }
+    Operators operator/(const Operators& operators) {
+        if (this->vectorSize >= operators.vectorSize) {
+            Operators o = *this;
+            for (int i = 0; i < operators.vectorSize; i++) {
+                o.vect[i] = this->vect[i] / operators.vect[i];
+            }
+            return o;
+        }
+        else if (this->vectorSize < operators.vectorSize) {
+            Operators o = operators;
+            for (int i = 0; i < this->vectorSize; i++) {
+                o.vect[i] = operators.vect[i] / this->vect[i];
+            }
+            return o;
+        }
+    }
+    Operators operator++(int) {
+        Operators operators = *this;
+        for (int i = 0; i < this->vectorSize; i++) {
+            this->vect[i]++;
+        }
+        return operators;
+    }
+    Operators operator++() {
+        for (int i = 0; i < this->vectorSize; i++) {
+            this->vect[i]++;
+        }
+        return *this;
+    }
 };
 
-class Dispozitiv {
+// "Device" class
+class Device {
 private:
-	int anFabricatie;
-	float pret;
+    int manufacturingYear;
+    float price;
 public:
-	//getteri
-	int getanFabricatie() {
-		return this->anFabricatie;
-	}
-	float getpret() {
-		return this->pret;
-	}
-	//setteri
-	void setanFabricatie(int anFabricatie) {
-		if (anFabricatie > 0)
-			this->anFabricatie = anFabricatie;
-		else
-			throw new exception("Ati introdus un an de fabricatie negativ !");
-	}
-	void setpret(float pret) {
-		if (pret > 0)
-			this->pret = pret;
-		else
-			throw new exception("Ati introdus un pret negativ!");
-	}
-	//constructorul DEFAULT
-	Dispozitiv() {
-		this->anFabricatie = 0;
-		this->pret = 0;
-	}
-	//constructorul de copiere
-	Dispozitiv(const Dispozitiv& dispozitiv) {
-		this->anFabricatie = dispozitiv.anFabricatie;
-		this->pret = dispozitiv.pret;
-	}
-	//constructorul cu parametrii
-	Dispozitiv(int anFabricatie, float pret) {
-		if (anFabricatie <= 0)
-			throw new exception("Ati introdus un an de fabricatie negativ !");
-		if (pret <= 0)
-			throw new exception("Ati introdus un pret negativ!");
-		this->anFabricatie = anFabricatie;
-		this->pret = pret;
-	}
-	//constructorul cu parametrul anFabricatie
-	Dispozitiv(int anFabricatie) {
-		if (anFabricatie <= 0)
-			throw new exception("Ati introdus un an de fabricatie negativ !");
-		this->anFabricatie = anFabricatie;
-	}
-	//constructorul cu parametrul pret
-	Dispozitiv(float pret) {
-		if (pret <= 0)
-			throw new exception("Ati introdus un pret negativ!");
-		this->pret = pret;
-	}
-	//FUNCTIE VIRTUALA
-	virtual string sunetEmis() = 0;
-	//supraincarcare operator<<
-	friend ostream& operator<<(ostream& scriere, const Dispozitiv& dispozitiv) {
-		scriere << endl << "An fabricatie: " << dispozitiv.anFabricatie << " --- Pret: " << dispozitiv.pret;
-		return scriere;
-	}
-	//supraincarcare operator>>
-	friend istream& operator>>(istream& citire, Dispozitiv& dispozitiv) {
-		cout << "Introduceti anul de fabricatie : "; citire >> dispozitiv.anFabricatie;
-		cout << "Introduceti pretul : "; citire >> dispozitiv.pret;
-		return citire;
-	}
-	//supraincarcare  ifstream& operator>>
-	friend ifstream& operator>>(ifstream& citire, Dispozitiv& dispozitiv) {
-		citire >> dispozitiv.anFabricatie;
-		citire >> dispozitiv.pret;
-		return citire;
-	}
-	//supraincarcare operator=
-	Dispozitiv& operator=(const Dispozitiv& dispozitiv) {
-		this->anFabricatie = dispozitiv.anFabricatie;
-		this->pret = dispozitiv.pret;
-		return *this;
-	}
-	//supraincarcare operator+=
-	Dispozitiv& operator+=(const Dispozitiv& dispozitiv) {
-		this->pret += dispozitiv.pret;
-		return *this;
-	}
-	//supraincarcare operator-=
-	Dispozitiv& operator-=(const Dispozitiv& dispozitiv) {
-		if (this->pret > dispozitiv.pret)
-			this->pret -= dispozitiv.pret;
-		else
-			this->pret = dispozitiv.pret - this->pret;
-		return *this;
-	}
-	//supraincarcare operator/=
-	Dispozitiv& operator/=(const Dispozitiv& dispozitiv) {
-		this->pret /= dispozitiv.pret;
-		return *this;
-	}
-	//supraincarcare operator*
-	Dispozitiv& operator*(const Dispozitiv& dispozitiv) {
-		Dispozitiv* d = this;
-		d->pret = this->pret * dispozitiv.pret;
-		return *d;
-	}
-	//supraincarcare operator*=
-	Dispozitiv& operator*=(const Dispozitiv& dispozitiv) {
-		this->pret *= dispozitiv.pret;
-		return *this;
-	}
-	//DESTRUCTOR
-	~Dispozitiv() {}
-}; //
-class Profil {
-private:
-	string clasa;
-	int garantie;
-	bool waterproof;
-	string tipRetea;
-public:
-	//constructorul DEFAULT
-	Profil() {
-		this->clasa = "unknown";
-		this->garantie = 0;
-		this->waterproof = 0;
-		this->tipRetea = "unknown";
-	}
-	//constructorul de copiere
-	Profil(const Profil& profil) {
-		this->clasa = profil.clasa;
-		this->garantie = profil.garantie;
-		this->waterproof = profil.waterproof;
-		this->tipRetea = profil.tipRetea;
-	}
-	//constructorul cu parametrii
-	Profil(const string& clasa, int garantie, bool waterproof, const string& tipRetea) {
-		if (clasa.length() <= 0)
-			throw new exception("Introduceti un string existent");
-		if (garantie <= 0)
-			throw new exception("Ati introdus o garantie negativa!");
-		if (tipRetea.length() <= 0)
-			throw new exception("Introduceti un string existent");
-		this->clasa = clasa;
-		this->garantie = garantie;
-		this->waterproof = waterproof;
-		this->tipRetea = tipRetea;
-	}
-	//getteri
-	string getclasa() {
-		return this->clasa;
-	}
-	char getclasa(int index) {
-		return this->clasa[index];
-	}
-	char gettipRetea(int index) {
-		return this->tipRetea[index];
-	}
-	int getgarantie() {
-		return this->garantie;
-	}
-	bool getwaterproof() {
-		return this->waterproof;
-	}
-	string gettipRetea() {
-		return this->tipRetea;
-	}
-	//setteri
-	void setclasa(const string& clasa) {
-		if (clasa.length() > 0)
-			this->clasa = clasa;
-		else
-			throw new exception("Introduceti un string existent");
-	}
-	void setgarantie(int garantie) {
-		if (garantie > 0)
-			this->garantie = garantie;
-		else
-			throw new exception("Ati introdus o garantie negativa!");
-	}
-	void setwaterproof(bool waterproof) {
-		this->waterproof = waterproof;
-	}
-	void settipRetea(const string& tipRetea) {
-		if (tipRetea.length() > 0)
-			this->tipRetea = tipRetea;
-		else
-			throw new exception("Introduceti un string existent");
-	}
-	//supraincarcare operator=
-	Profil operator=(const Profil& profil) {
-		this->clasa = profil.clasa;
-		this->garantie = profil.garantie;
-		this->waterproof = profil.waterproof;
-		this->tipRetea = profil.tipRetea;
-		return *this;
-	}
-	//supraincarcare operator+
-	Profil operator+(const Profil& profil) {
-		Profil p = *this;
-		p.garantie = this->garantie + profil.garantie;
-		return p;
-	}
-	//supraincarcare operator-
-	Profil operator-(const Profil& profil) {
-		Profil p = *this;
-		if (this->garantie > profil.garantie)
-			p.garantie = this->garantie - profil.garantie;
-		else
-			p.garantie = profil.garantie - this->garantie;
-		return p;
-	}
-	//supraincarcare operator/
-	Profil operator/(const Profil& profil) {
-		Profil p = *this;
-		p.garantie = this->garantie / profil.garantie;
-		return p;
-	}
-	//supraincarcare operator++ - post
-	Profil operator++(int) {
-		Profil p = *this;
-		this->garantie++;
-		return p;
-	}
-	//supraincarcare operator++ - pre
-	Profil operator++() {
-		this->garantie++;
-		return *this;
-	}
-	//supraincarcare operator<<
-	friend ostream& operator<<(ostream& scriere, const Profil& profil) {
-		scriere << endl << "Clasa:" << profil.clasa << "---Garantie:" << profil.garantie << " ani--- Waterproof:" << profil.waterproof << "--- Tip de retea:" << profil.tipRetea << endl;
-		return scriere;
-	}
-	//supraincarcare operator>>
-	friend istream& operator>>(istream& citire, Profil& profil) {
-		cout << "Clasa:"; citire >> profil.clasa;
-		cout << "Garantie:"; citire >> profil.garantie;
-		cout << "Waterproof:"; citire >> profil.waterproof;
-		cout << "Tip de reteaL"; citire >> profil.tipRetea;
-		return citire;
-	}
-	//supraincarcare ofstream& operator<<
-	friend ofstream& operator<<(ofstream& scriere, const Profil& profil) {
-		scriere << endl << "Clasa:" << profil.clasa << "---Garantie:" << profil.garantie << " ani--- Waterproof:" << profil.waterproof << "--- Tip de retea:" << profil.tipRetea << endl << endl;
-		return scriere;
-	}
-	//DESTRUCTOR
-	~Profil() {}
-};
-class Senzor : public Dispozitiv {//clasa Senzor mosteneste clasa Dispozitiv
-private:
-	const int id;
-	bool s_a_c;
-	static int contor;
-	int numarInteractiuni = 0;
-	int numarResetari = 0;
-	int durataDeViata = 0;
-	int* istoricDate = nullptr;
-	int dimensiuneIstoricDate = 0;
-	char* pozitionare = nullptr;
-	float distantaFataDeUrmatorulSenzor = 0;
-	float timpDeRaspuns = 0;
-	bool conectareaDeLaDistanta = 0;
-	string situatieCritica = "";
-	bool interconectareCuAltiSenzori = 0;
-	Profil profil;
-public:
-	friend class CasaInteligenta;
-	//constructorul DEFAULT
-	Senzor() :id(contor++), s_a_c(0), Dispozitiv() {
-		this->pozitionare = new char[strlen("Fara nume") + 1];
-		strcpy_s(this->pozitionare, strlen("Fara nume") + 1, "Fara nume");
-	}
-	//constructorul de copiere
-	Senzor(const Senzor& senzor) :id(contor++), s_a_c(0), Dispozitiv(senzor) {
-		this->numarInteractiuni = senzor.numarInteractiuni;
-		this->numarResetari = senzor.numarResetari;
-		this->durataDeViata = senzor.durataDeViata;
-		this->dimensiuneIstoricDate = senzor.dimensiuneIstoricDate;
-		if (this->istoricDate != nullptr)
-			delete[]this->istoricDate;
-		this->istoricDate = new int[senzor.dimensiuneIstoricDate];
-		for (int i = 0; i < this->dimensiuneIstoricDate; i++) {
-			this->istoricDate[i] = senzor.istoricDate[i];
-		}
-		if (this->pozitionare != nullptr)
-			delete[]this->pozitionare;
-		this->pozitionare = new char[strlen(senzor.pozitionare) + 1];
-		strcpy_s(this->pozitionare, strlen(senzor.pozitionare) + 1, senzor.pozitionare);
-		this->distantaFataDeUrmatorulSenzor = senzor.distantaFataDeUrmatorulSenzor;
-		this->timpDeRaspuns = senzor.timpDeRaspuns;
-		this->conectareaDeLaDistanta = senzor.conectareaDeLaDistanta;
-		this->situatieCritica = senzor.situatieCritica;
-		this->interconectareCuAltiSenzori = senzor.interconectareCuAltiSenzori;
-		this->profil = senzor.profil;
-	}
-	//constructorul cu parametrii
-	Senzor(int numarInteractiuni, int numarResetari, int durataDeViata, int* istoricDate, int dimensiuneIstoricDate, char* pozitionare, float distantaFataDeUrmatorulSenzor, float timpDeRaspuns, bool conectareaDeLaDistanta, string situatieCritica, bool interconectareCuAltiSenzori, int anFabricatie, float pret) :id(contor++), s_a_c(0), Dispozitiv(anFabricatie, pret) {
-		if (numarInteractiuni <= 0)
-			throw new exception("Ati introdus un numar negativ de interactiuni");
-		if (numarResetari <= 0)
-			throw new exception("Ati introdus un numar negativ de resetari");
-		if (durataDeViata <= 0)
-			throw new exception("Ati introdus o durata de viata negativa");
-		if (istoricDate == nullptr)
-			throw new exception("Asignati un pointer nenul");
-		if (dimensiuneIstoricDate <= 0)
-			throw new exception("Ati introdus o dimensiune negativa");
-		if (pozitionare == nullptr)
-			throw new exception("Asignati un pointer nenul");
-		if (distantaFataDeUrmatorulSenzor <= 0)
-			throw new exception("Ati introdus o distanta negativa fata de urmatorul senzor");
-		if (timpDeRaspuns <= 0)
-			throw new exception("Ati introdus un timp de raspuns negativ");
-		if (situatieCritica.length() <= 0)
-			throw new exception("Introduceti un string existent");
-		this->numarInteractiuni = numarInteractiuni;
-		this->numarResetari = numarResetari;
-		this->durataDeViata = durataDeViata;
-		this->dimensiuneIstoricDate = dimensiuneIstoricDate;
-		this->istoricDate = new int[dimensiuneIstoricDate];
-		for (int i = 0; i < dimensiuneIstoricDate; i++) {
-			this->istoricDate[i] = istoricDate[i];
-		}
-		this->pozitionare = new char[strlen(pozitionare) + 1];
-		strcpy_s(this->pozitionare, strlen(pozitionare) + 1, pozitionare);
-		this->distantaFataDeUrmatorulSenzor = distantaFataDeUrmatorulSenzor;
-		this->timpDeRaspuns = timpDeRaspuns;
-		this->conectareaDeLaDistanta = conectareaDeLaDistanta;
-		this->situatieCritica = situatieCritica;
-		this->interconectareCuAltiSenzori = interconectareCuAltiSenzori;
-		Profil p;
-		this->profil = p;
-	}
-
-	//supraincarcare operator=
-	Senzor operator=(const Senzor& senzor) {
-		Dispozitiv::operator=(senzor);
-		this->profil = senzor.profil;
-		this->numarInteractiuni = senzor.numarInteractiuni;
-		this->numarResetari = senzor.numarResetari;
-		this->durataDeViata = senzor.durataDeViata;
-		this->dimensiuneIstoricDate = senzor.dimensiuneIstoricDate;
-		if (this->istoricDate != nullptr)
-			delete[]this->istoricDate;
-		this->istoricDate = new int[senzor.dimensiuneIstoricDate];
-		for (int i = 0; i < this->dimensiuneIstoricDate; i++) {
-			this->istoricDate[i] = senzor.istoricDate[i];
-		}
-		if (this->pozitionare != nullptr)
-			delete[]this->pozitionare;
-		this->pozitionare = new char[strlen(senzor.pozitionare) + 1];
-		strcpy_s(this->pozitionare, strlen(senzor.pozitionare) + 1, senzor.pozitionare);
-		this->distantaFataDeUrmatorulSenzor = senzor.distantaFataDeUrmatorulSenzor;
-		this->timpDeRaspuns = senzor.timpDeRaspuns;
-		this->conectareaDeLaDistanta = senzor.conectareaDeLaDistanta;
-		this->situatieCritica = senzor.situatieCritica;
-		this->interconectareCuAltiSenzori = senzor.interconectareCuAltiSenzori;
-		return *this;
-	}
-	//supraincarcare operator<<
-	friend ostream& operator<<(ostream& scriere, const Senzor& senzor) {
-		scriere << "ID: " << senzor.id << " ; numar interactiuni: " << senzor.numarInteractiuni << "; numar resetari: " << senzor.numarResetari << "; durata de viata:" << senzor.durataDeViata << "; dimensiune istoric date:" << senzor.dimensiuneIstoricDate << "; distanta fata de urmatorul senzor:" << senzor.distantaFataDeUrmatorulSenzor << "; timp de raspuns: " << senzor.timpDeRaspuns << "; conectare de la distanta: " << senzor.conectareaDeLaDistanta << "; situatie critica:" << senzor.situatieCritica << "; interconectare cu alti senzori: " << senzor.interconectareCuAltiSenzori << endl;
-		scriere << "Istoric date : ";
-		if (senzor.dimensiuneIstoricDate != 0) {
-			for (int i = 0; i < senzor.dimensiuneIstoricDate; i++) {
-				scriere << senzor.istoricDate[i];
-			}
-		}
-		else
-			scriere << "Nu avem istoric de date";
-		scriere << endl << "Pozitionare senzor : ";
-		if (senzor.pozitionare != nullptr) {
-			for (int i = 0; i < strlen(senzor.pozitionare); i++) {
-				scriere << senzor.pozitionare[i];
-			}
-		}
-		else
-			scriere << "Nu avem pozitionare";
-		scriere << (Dispozitiv&)senzor;
-		scriere << senzor.profil << endl << endl;
-		return scriere;
-	}
-	//supraincarcare operator>>
-	friend istream& operator>>(istream& citire, Senzor& senzor) {
-		cout << "numar interactiuni: "; citire >> senzor.numarInteractiuni; cout << "numar resetari: "; citire >> senzor.numarResetari; cout << "durata de viata:"; citire >> senzor.durataDeViata; cout << "dimensiune istoric date:"; citire >> senzor.dimensiuneIstoricDate; cout << "distanta fata de urmatorul senzor:"; citire >> senzor.distantaFataDeUrmatorulSenzor; cout << "timp de raspuns : "; citire >> senzor.timpDeRaspuns; cout << "conectare de la distanta : "; citire >> senzor.conectareaDeLaDistanta; cout << "situatie critica : "; citire >> senzor.situatieCritica; cout << "interconectare cu alti senzori : "; citire >> senzor.interconectareCuAltiSenzori;
-		if (senzor.istoricDate != nullptr)
-			delete[]senzor.istoricDate;
-		senzor.istoricDate = new int[senzor.dimensiuneIstoricDate];
-		for (int i = 0; i < senzor.dimensiuneIstoricDate; i++) {
-			cout << "Introduceti cod " << i << ": ";
-			citire >> senzor.istoricDate[i];
-		}
-		int dimensiunepozitionare;
-		cout << "Introduceti dimensiunea vectorului de pozitionare : ";
-		cin >> dimensiunepozitionare;
-		if (senzor.pozitionare != nullptr)
-			delete[]senzor.pozitionare;
-		senzor.pozitionare = new char[dimensiunepozitionare + 1];
-		for (int i = 0; i < dimensiunepozitionare; i++) {
-			cout << "Introduceti pozitia " << i << "/" << dimensiunepozitionare;
-			citire >> senzor.pozitionare[i];
-		}
-		senzor.pozitionare[dimensiunepozitionare] = '\0';
-		citire >> (Dispozitiv&)senzor;
-		return citire;
-	}
-	//supraincarcare ifstream& operator>>
-	friend ifstream& operator>>(ifstream& citire, Senzor& senzor) {
-		citire >> senzor.numarInteractiuni;
-		citire >> senzor.numarResetari;
-		citire >> senzor.durataDeViata;
-		citire >> senzor.dimensiuneIstoricDate;
-		citire >> senzor.distantaFataDeUrmatorulSenzor;
-		citire >> senzor.timpDeRaspuns;
-		citire >> senzor.conectareaDeLaDistanta;
-		citire >> senzor.situatieCritica;
-		citire >> senzor.interconectareCuAltiSenzori;
-		if (senzor.istoricDate != nullptr)
-			delete[]senzor.istoricDate;
-		senzor.istoricDate = new int[senzor.dimensiuneIstoricDate];
-		for (int i = 0; i < senzor.dimensiuneIstoricDate; i++) {
-			citire >> senzor.istoricDate[i];
-		}
-		int dimensiunepozitionare;
-		citire >> dimensiunepozitionare;
-		if (senzor.pozitionare != nullptr)
-			delete[]senzor.pozitionare;
-		senzor.pozitionare = new char[dimensiunepozitionare + 1];
-		for (int i = 0; i < dimensiunepozitionare; i++) {
-			citire >> senzor.pozitionare[i];
-		}
-		senzor.pozitionare[dimensiunepozitionare] = '\0';
-		citire >> (Dispozitiv&)senzor;
-		return citire;
-	}
-	//supraincarcare operator+
-	Senzor operator+(const Senzor& senzor) {
-		Senzor s = *this;
-		s.durataDeViata = this->durataDeViata + senzor.durataDeViata;
-		return s;
-	}
-	//supraincarcare operator-
-	Senzor operator-(const Senzor& senzor) {
-		Senzor s = *this;
-		if (senzor.durataDeViata > this->durataDeViata)
-			s.durataDeViata = senzor.durataDeViata - this->durataDeViata;
-		else
-			s.durataDeViata = this->durataDeViata - senzor.durataDeViata;
-		return s;
-	}
-	//supraincarcare operator/
-	Senzor operator/(const Senzor& senzor) {
-		Senzor s = *this;
-		s.distantaFataDeUrmatorulSenzor = this->distantaFataDeUrmatorulSenzor / senzor.distantaFataDeUrmatorulSenzor;
-		return s;
-	}
-	//supraincarcare operator++ - post
-	Senzor operator++(int) {
-		Senzor senzor = *this;
-		this->durataDeViata++;
-		return senzor;
-	}
-	//supraincarcare operator++ - pre
-	Senzor operator++() {
-		this->durataDeViata++;
-		return *this;
-	}
-
-	//DESTRUCTOR
-	~Senzor() {
-		if (this->pozitionare != nullptr)
-			delete[]this->pozitionare;
-		if (this->istoricDate != nullptr)
-			delete[]this->istoricDate;
-	}
-	//getteri
-	int getdimensiuneIstoricDate() {
-		return this->dimensiuneIstoricDate;
-	}
-	int getid() {
-		return this->id;
-	}
-	bool gets_a_c() {
-		return this->s_a_c;
-	}
-	int* getistoricDate() {
-		if (this->istoricDate != nullptr)
-			return this->istoricDate;
-		else
-			throw new exception("Pointer Nul");
-	}
-	int getnumarInteractiuni() {
-		return this->numarInteractiuni;
-	}
-	int getnumarResetari() {
-		return this->numarResetari;
-	}
-	int getdurataDeViata() {
-		return this->durataDeViata;
-	}
-	char* getpozitionare() {
-		return this->pozitionare;
-	}
-	char getpozitionare(int index) {
-		if (this->pozitionare != nullptr)
-			return this->pozitionare[index];
-		else {
-			throw "Nu avem pozitionare !";
-		}
-	}
-	float getdistantaFataDeUrmatorulSenzor() {
-		return this->distantaFataDeUrmatorulSenzor;
-	}
-	float gettimpDeRaspuns() {
-		return this->timpDeRaspuns;
-	}
-	bool getconectareaDeLaDistanta() {
-		return this->conectareaDeLaDistanta;
-	}
-	string getsituatieCritica() {
-		return this->situatieCritica;
-	}
-	bool getinterconectareCuAltiSenzori() {
-		return this->interconectareCuAltiSenzori;
-	}
-	Profil getprofil() {
-		return this->profil;
-	}
-	//setteri
-	void setistoricDate(int* istoricDate) {
-		if (istoricDate != nullptr)
-			this->istoricDate = istoricDate;
-		else
-			throw new exception("Asignati un pointer nenul");
-	}
-	void setdimensiuneIstoricDate(int dimensiuneIstoricDate) {
-		if (dimensiuneIstoricDate > 0)
-			this->dimensiuneIstoricDate = dimensiuneIstoricDate;
-		else
-			throw new exception("Ati introdus o dimensiune negativa");
-	}
-	void setnumarInteractiuni(int numarInteractiuni) {
-		if (numarInteractiuni > 0)
-			this->numarInteractiuni = numarInteractiuni;
-		else
-			throw new exception("Ati introdus un numar negativ de interactiuni");
-	}
-	void setnumarResetari(int numarResetari) {
-		if (numarResetari > 0)
-			this->numarResetari = numarResetari;
-		else
-			throw new exception("Ati introdus un numar negativ de resetari");
-	}
-	void setdurataDeViata(int durataDeViata) {
-		if (durataDeViata > 0)
-			this->durataDeViata = durataDeViata;
-		else
-			throw new exception("Ati introdus o durata de viata negativa");
-	}
-	void setpozitionare(char* pozitionare) {
-		if (strlen(pozitionare) > 0)
-			this->pozitionare = pozitionare;
-		else
-			throw new exception("Asignati un pointer nenul");
-	}
-	void setdistantaFataDeUrmatorulSenzor(float distantaFataDeUrmatorulSenzor) {
-		if (distantaFataDeUrmatorulSenzor > 0)
-			this->distantaFataDeUrmatorulSenzor = distantaFataDeUrmatorulSenzor;
-		else
-			throw new exception("Ati introdus o distanta negativa fata de urmatorul senzor");
-	}
-	void settimpDeRaspuns(float timpDeRaspuns) {
-		if (timpDeRaspuns > 0)
-			this->timpDeRaspuns = timpDeRaspuns;
-		else
-			throw new exception("Ati introdus un timp de raspuns negativ");
-	}
-	void setconectareaDeLaDistanta(bool conectareaDeLaDistanta) {
-		this->conectareaDeLaDistanta = conectareaDeLaDistanta;
-	}
-	void setsituatieCritica(const string& situatieCritica) {
-		if (situatieCritica.length() > 0)
-			this->situatieCritica = situatieCritica;
-		else
-			throw new exception("Introduceti un string existent");
-	}
-	void setinterconectareCuAltiSenzori(bool interconectareCuAltiSenzori) {
-		this->interconectareCuAltiSenzori = interconectareCuAltiSenzori;
-	}
-	void setprofil(const Profil& profil) {
-		this->profil = profil;
-	}
-	string sunetEmis() {
-		return "bipbip";
-	}
-};
-class CasaInteligenta {
-private:
-	int numarSenzori;
-	Senzor** totalitateSenzori;
-	float Rating = 0;
-public:
-	static void corectares_a_c(Senzor** s , int marime) {
-		if (s != nullptr) {
-			for (int i = 0; i < marime; i++) {
-				if (s[i] != nullptr) {
-					s[i]->s_a_c = 1;
-				}
-				else
-					throw new exception("Vectorul contie un senzor null");
-			}
-		}
-		else
-			throw new exception("Vectorul nu contine senzori!");
-	}
-	//getteri
-	float getrating() {
-		return this->Rating;
-	}
-	int getnumarSenzori() {
-		return this->numarSenzori;
-	}
-	Senzor** gettotalitateSenzori() {
-		if (this->totalitateSenzori != nullptr)
-			return this->totalitateSenzori;
-		else
-			throw new exception("Casa inteligenta nu contine senzori!");
-	}
-	//setteri
-	void setrating(float Rating) {
-		if (Rating > 0)
-			this->Rating = Rating;
-		else
-			throw new exception("Ati introdus un rating negativ");
-	}
-	void setnumarSenzori(int numarSenzori) {
-		if (numarSenzori > 0) {
-			if (numarSenzori < this->numarSenzori) {
-				Senzor** senzornou;
-				senzornou = new Senzor * [this->numarSenzori];
-				for (int i = 0; i < this->numarSenzori; i++) {
-					senzornou[i] = this->totalitateSenzori[i];
-				}
-				delete[]this->totalitateSenzori;
-				int a = this->numarSenzori;
-				this->numarSenzori = numarSenzori;
-				this->totalitateSenzori = new Senzor * [numarSenzori];
-				for (int i = 0; i < this->numarSenzori; i++) {
-					this->totalitateSenzori[i] = senzornou[i];
-				}
-				delete[]senzornou;
-			}
-			else if (numarSenzori > this->numarSenzori) {
-				Senzor** senzornou;
-				senzornou = new Senzor * [this->numarSenzori];
-				for (int i = 0; i < this->numarSenzori; i++) {
-					senzornou[i] = this->totalitateSenzori[i];
-				}
-				delete[]this->totalitateSenzori;
-				int a = this->numarSenzori;
-				this->numarSenzori = numarSenzori;
-				this->totalitateSenzori = new Senzor * [numarSenzori];
-				for (int i = 0; i < this->numarSenzori; i++) {
-					this->totalitateSenzori[i] = new Senzor();
-				}
-				for (int i = 0; i <a; i++) {
-					this->totalitateSenzori[i] = senzornou[i];
-				}
-				delete[]senzornou;
-			}
-			else
-				throw new exception("Vectorul deja contine aceasta dimensiune !");
-		}
-		else
-			throw new exception("Ati introdus un numar negativ de senzori");
-	}
-	void settotalitateSenzori(Senzor** senzori) {
-		if (senzori != nullptr)
-			this->totalitateSenzori = senzori;
-		else
-			throw new exception("Introduceti un pointer nenul");
-	}
-	//constructorul DEFAULT
-	CasaInteligenta() {
-		this->numarSenzori = 0;
-		this->totalitateSenzori = nullptr;
-	}
-	//constructorul cu parametrii
-	CasaInteligenta(int numarSenzori, Senzor** totalitateSenzori) {
-		if (numarSenzori <= 0)
-			throw new exception("Ati introdus un numar negativ de senzori");
-		if (totalitateSenzori == nullptr)
-			throw new exception("Introduceti un pointer nenul");
-		this->numarSenzori = numarSenzori;
-		this->totalitateSenzori = new Senzor*[numarSenzori];
-		for (int i = 0; i < numarSenzori; i++) {
-			this->totalitateSenzori[i] = totalitateSenzori[i];
-		}
-		//modificare s_a_c
-		for (int i = 0; i < numarSenzori; i++) {
-			this->totalitateSenzori[i]->s_a_c = 1;
-		}
-	}
-	//constructorul de copiere
-	CasaInteligenta(const CasaInteligenta& casainteligenta) {
-		this->numarSenzori = casainteligenta.numarSenzori;
-		this->totalitateSenzori = new Senzor*[casainteligenta.numarSenzori];
-		for (int i = 0; i < this->numarSenzori; i++) {
-			this->totalitateSenzori[i] = new Senzor();
-		}
-		for (int i = 0; i < casainteligenta.numarSenzori; i++) {
-			*this->totalitateSenzori[i] = *casainteligenta.totalitateSenzori[i];
-		}
-		//modificare s_a_c
-		for (int i = 0; i < numarSenzori; i++) {
-			this->totalitateSenzori[i]->s_a_c = 1;
-		}
-		this->Rating = casainteligenta.Rating;
-	}
-	//supraincarcare operator=
-	CasaInteligenta operator=(const CasaInteligenta& casainteligenta) {
-		if (this->totalitateSenzori != nullptr) {
-			delete[]this->totalitateSenzori;
-		}
-		this->numarSenzori = casainteligenta.numarSenzori;
-		this->totalitateSenzori = new Senzor*[casainteligenta.numarSenzori];
-		for (int i = 0; i < this->numarSenzori; i++) {
-			this->totalitateSenzori[i] = new Senzor();
-		}
-		for (int i = 0; i < casainteligenta.numarSenzori; i++) {
-			*this->totalitateSenzori[i] = *casainteligenta.totalitateSenzori[i];
-		}
-		//modificare s_a_c
-		for (int i = 0; i < numarSenzori; i++) {
-			this->totalitateSenzori[i]->s_a_c = 1;
-		}
-		this->Rating = casainteligenta.Rating;
-		return *this;
-	}
-	//supraincarcare operator<<
-	friend ostream& operator<<(ostream& scriere, const CasaInteligenta& casainteligenta) {
-		scriere << "Numar senzori casa inteligenta : " << casainteligenta.numarSenzori << endl;
-		for (int i = 0; i < casainteligenta.numarSenzori; i++) {
-			scriere << "Senzor " << i + 1 << " :" << endl;
-			scriere << *casainteligenta.totalitateSenzori[i];
-		}
-		scriere << endl << "Rating Casa Inteligenta: " << casainteligenta.Rating << endl;
-		return scriere;
-	}
-	//supraincarcare operator>>
-	friend istream& operator>>(istream& citire, CasaInteligenta& casainteligenta) {
-		cout << "Introduceti numar de senzori : "; citire >> casainteligenta.numarSenzori;
-		if (casainteligenta.totalitateSenzori != nullptr) {
-			delete[]casainteligenta.totalitateSenzori;
-		}
-		casainteligenta.totalitateSenzori = new Senzor*[casainteligenta.numarSenzori];
-		for (int i = 0; i < casainteligenta.numarSenzori; i++) {
-			casainteligenta.totalitateSenzori[i] = new Senzor();
-		}
-		for (int i = 0; i < casainteligenta.numarSenzori; i++) {
-			cout << "Introduceti senzorul " << i << " :"<<endl;
-			citire >> *casainteligenta.totalitateSenzori[i];
-		}
-		corectares_a_c(casainteligenta.totalitateSenzori, casainteligenta.numarSenzori);
-		return citire;
-	}
-	//supraincarcare ifstream& operator>>
-	friend ifstream& operator>>(ifstream& citire, CasaInteligenta& casainteligenta) {
-		citire >> casainteligenta.numarSenzori;
-		if (casainteligenta.totalitateSenzori != nullptr) {
-			delete[]casainteligenta.totalitateSenzori;
-		}
-		casainteligenta.totalitateSenzori = new Senzor*[casainteligenta.numarSenzori];
-		for (int i = 0; i < casainteligenta.numarSenzori; i++) {
-			casainteligenta.totalitateSenzori[i] = new Senzor();
-		}
-		for (int i = 0; i < casainteligenta.numarSenzori; i++) {
-			citire >> *casainteligenta.totalitateSenzori[i];
-		}
-		corectares_a_c(casainteligenta.totalitateSenzori, casainteligenta.numarSenzori);
-		return citire;
-	}
-	//supraincarcare operator++ - post
-	CasaInteligenta operator++(int) {
-		CasaInteligenta casainteligenta = *this;
-		for (int i = 0; i < this->numarSenzori; i++) {
-			(*this->totalitateSenzori[i])++;
-		}
-		return casainteligenta;
-	}
-	//supraincarcare operator++ - pre
-	CasaInteligenta operator++() {
-		for (int i = 0; i < this->numarSenzori; i++) {
-			(*this->totalitateSenzori[i])++;
-		}
-		return *this;
-	}
-	//supraincarcare operator+
-	CasaInteligenta operator+(const CasaInteligenta& casainteligenta) {
-		if (this->numarSenzori >= casainteligenta.numarSenzori) {
-			CasaInteligenta casa = *this;
-			for (int i = 0; i < casainteligenta.numarSenzori; i++) {
-				*casa.totalitateSenzori[i] = *this->totalitateSenzori[i] + *casainteligenta.totalitateSenzori[i];
-			}
-			return casa;
-		}
-		else if (this->numarSenzori < casainteligenta.numarSenzori) {
-			CasaInteligenta casa = casainteligenta;
-			for (int i = 0; i < this->numarSenzori; i++) {
-				*casa.totalitateSenzori[i] = *this->totalitateSenzori[i] + *casainteligenta.totalitateSenzori[i];
-			}
-			return casa;
-		}
-	}
-	//supraincarcare operator-
-	CasaInteligenta operator-(const CasaInteligenta& casainteligenta) {
-		if (this->numarSenzori >= casainteligenta.numarSenzori) {
-			CasaInteligenta casa = *this;
-			for (int i = 0; i < casainteligenta.numarSenzori; i++) {
-				*casa.totalitateSenzori[i] = *this->totalitateSenzori[i] - *casainteligenta.totalitateSenzori[i];
-			}
-			return casa;
-		}
-		else if (this->numarSenzori < casainteligenta.numarSenzori) {
-			CasaInteligenta casa = casainteligenta;
-			for (int i = 0; i < this->numarSenzori; i++) {
-				*casa.totalitateSenzori[i] = *casainteligenta.totalitateSenzori[i] - *this->totalitateSenzori[i];
-			}
-			return casa;
-		}
-	}
-	//supraincarcare operator/
-	CasaInteligenta operator/(const CasaInteligenta& casainteligenta) {
-		if (this->numarSenzori >= casainteligenta.numarSenzori) {
-			CasaInteligenta casa = *this;
-			for (int i = 0; i < casainteligenta.numarSenzori; i++) {
-				*casa.totalitateSenzori[i] = *this->totalitateSenzori[i] / *casainteligenta.totalitateSenzori[i];
-			}
-			return casa;
-		}
-		else if (this->numarSenzori < casainteligenta.numarSenzori) {
-			CasaInteligenta casa = casainteligenta;
-			for (int i = 0; i < this->numarSenzori; i++) {
-				*casa.totalitateSenzori[i] = *casainteligenta.totalitateSenzori[i] / *this->totalitateSenzori[i];
-			}
-			return casa;
-		}
-	}
-	~CasaInteligenta() {
-		if (this->totalitateSenzori != nullptr) {
-			for (int i = 0; i < this->numarSenzori; i++){
-				if (this->totalitateSenzori[i] != nullptr) {
-					delete this->totalitateSenzori[i];
-				}
-			}
-			delete[]this->totalitateSenzori;
-		}	
-	}
+    //getters
+    int getManufacturingYear() {
+        return this->manufacturingYear;
+    }
+    float getPrice() {
+        return this->price;
+    }
+    //setters
+    void setManufacturingYear(int manufacturingYear) {
+        if (manufacturingYear > 0)
+            this->manufacturingYear = manufacturingYear;
+        else
+            throw new exception("You have entered a negative manufacturing year!");
+    }
+    void setPrice(float price) {
+        if (price > 0)
+            this->price = price;
+        else
+            throw new exception("You have entered a negative price!");
+    }
+    //DEFAULT constructor
+    Device() {
+        this->manufacturingYear = 0;
+        this->price = 0;
+    }
+    //copy constructor
+    Device(const Device& device) {
+        this->manufacturingYear = device.manufacturingYear;
+        this->price = device.price;
+    }
+    //constructor with parameters
+    Device(int manufacturingYear, float price) {
+        if (manufacturingYear <= 0)
+            throw new exception("You have entered a negative manufacturing year!");
+        if (price <= 0)
+            throw new exception("You have entered a negative price!");
+        this->manufacturingYear = manufacturingYear;
+        this->price = price;
+    }
+    //constructor with the parameter manufacturingYear
+    Device(int manufacturingYear) {
+        if (manufacturingYear <= 0)
+            throw new exception("You have entered a negative manufacturing year!");
+        this->manufacturingYear = manufacturingYear;
+    }
+    //constructor with the parameter price
+    Device(float price) {
+        if (price <= 0)
+            throw new exception("You have entered a negative price!");
+        this->price = price;
+    }
+    //VIRTUAL FUNCTION
+    virtual string emittedSound() = 0;
+    //operator<< overload
+    friend ostream& operator<<(ostream& out, const Device& device) {
+        out << endl << "Manufacturing year: " << device.manufacturingYear << " --- Price: " << device.price;
+        return out;
+    }
+    //operator>> overload
+    friend istream& operator>>(istream& in, Device& device) {
+        cout << "Enter manufacturing year: ";
+        in >> device.manufacturingYear;
+        cout << "Enter price: ";
+        in >> device.price;
+        return in;
+    }
+    // ifstream >> overload
+    friend ifstream& operator>>(ifstream& in, Device& device) {
+        in >> device.manufacturingYear;
+        in >> device.price;
+        return in;
+    }
+    //operator= overload
+    Device& operator=(const Device& device) {
+        this->manufacturingYear = device.manufacturingYear;
+        this->price = device.price;
+        return *this;
+    }
+    //operator+= overload
+    Device& operator+=(const Device& device) {
+        this->price += device.price;
+        return *this;
+    }
+    //operator-= overload
+    Device& operator-=(const Device& device) {
+        if (this->price > device.price)
+            this->price -= device.price;
+        else
+            this->price = device.price - this->price;
+        return *this;
+    }
+    //operator/= overload
+    Device& operator/=(const Device& device) {
+        this->price /= device.price;
+        return *this;
+    }
+    //operator* overload
+    Device& operator*(const Device& device) {
+        Device* d = this;
+        d->price = this->price * device.price;
+        return *d;
+    }
+    //operator*= overload
+    Device& operator*=(const Device& device) {
+        this->price *= device.price;
+        return *this;
+    }
+    //DESTRUCTOR
+    ~Device() {}
 };
 
+class Profile {
+private:
+    string category;
+    int warranty;
+    bool waterproof;
+    string networkType;
+public:
+    //DEFAULT constructor
+    Profile() {
+        this->category = "unknown";
+        this->warranty = 0;
+        this->waterproof = 0;
+        this->networkType = "unknown";
+    }
+    //copy constructor
+    Profile(const Profile& profile) {
+        this->category = profile.category;
+        this->warranty = profile.warranty;
+        this->waterproof = profile.waterproof;
+        this->networkType = profile.networkType;
+    }
+    //constructor with parameters
+    Profile(const string& category, int warranty, bool waterproof, const string& networkType) {
+        if (category.length() <= 0)
+            throw new exception("Please enter an existing string");
+        if (warranty <= 0)
+            throw new exception("You have entered a negative warranty!");
+        if (networkType.length() <= 0)
+            throw new exception("Please enter an existing string");
+        this->category = category;
+        this->warranty = warranty;
+        this->waterproof = waterproof;
+        this->networkType = networkType;
+    }
+    //getters
+    string getCategory() {
+        return this->category;
+    }
+    char getCategory(int index) {
+        return this->category[index];
+    }
+    char getNetworkType(int index) {
+        return this->networkType[index];
+    }
+    int getWarranty() {
+        return this->warranty;
+    }
+    bool getWaterproof() {
+        return this->waterproof;
+    }
+    string getNetworkType() {
+        return this->networkType;
+    }
+    //setters
+    void setCategory(const string& category) {
+        if (category.length() > 0)
+            this->category = category;
+        else
+            throw new exception("Please enter an existing string");
+    }
+    void setWarranty(int warranty) {
+        if (warranty > 0)
+            this->warranty = warranty;
+        else
+            throw new exception("You have entered a negative warranty!");
+    }
+    void setWaterproof(bool waterproof) {
+        this->waterproof = waterproof;
+    }
+    void setNetworkType(const string& networkType) {
+        if (networkType.length() > 0)
+            this->networkType = networkType;
+        else
+            throw new exception("Please enter an existing string");
+    }
+    //operator= overload
+    Profile operator=(const Profile& profile) {
+        this->category = profile.category;
+        this->warranty = profile.warranty;
+        this->waterproof = profile.waterproof;
+        this->networkType = profile.networkType;
+        return *this;
+    }
+    //operator+ overload
+    Profile operator+(const Profile& profile) {
+        Profile p = *this;
+        p.warranty = this->warranty + profile.warranty;
+        return p;
+    }
+    //operator- overload
+    Profile operator-(const Profile& profile) {
+        Profile p = *this;
+        if (this->warranty > profile.warranty)
+            p.warranty = this->warranty - profile.warranty;
+        else
+            p.warranty = profile.warranty - this->warranty;
+        return p;
+    }
+    //operator/ overload
+    Profile operator/(const Profile& profile) {
+        Profile p = *this;
+        p.warranty = this->warranty / profile.warranty;
+        return p;
+    }
+    //operator++ - post overload
+    Profile operator++(int) {
+        Profile p = *this;
+        this->warranty++;
+        return p;
+    }
+    //operator++ - pre overload
+    Profile operator++() {
+        this->warranty++;
+        return *this;
+    }
+    //operator<< overload
+    friend ostream& operator<<(ostream& out, const Profile& profile) {
+        out << endl << "Category:" << profile.category << "---Warranty:" << profile.warranty << " years--- Waterproof:" << profile.waterproof << "--- Network type:" << profile.networkType << endl;
+        return out;
+    }
+    //operator>> overload
+    friend istream& operator>>(istream& in, Profile& profile) {
+        cout << "Category:"; in >> profile.category;
+        cout << "Warranty:"; in >> profile.warranty;
+        cout << "Waterproof:"; in >> profile.waterproof;
+        cout << "Network typeL"; in >> profile.networkType;
+        return in;
+    }
+    //ofstream& operator<< overload
+    friend ofstream& operator<<(ofstream& out, const Profile& profile) {
+        out << endl << "Category:" << profile.category << "---Warranty:" << profile.warranty << " years--- Waterproof:" << profile.waterproof << "--- Network type:" << profile.networkType << endl << endl;
+        return out;
+    }
+    //DESTRUCTOR
+    ~Profile() {}
+};
 
-int  Senzor::contor = 1;
+// The "Sensor" class inherits from "Device"
+class Sensor : public Device {
+private:
+    const int id;
+    bool s_a_c;
+    static int counter;
+    int interactionCount = 0;
+    int resetCount = 0;
+    int lifespan = 0;
+    int* dataHistory = nullptr;
+    int dataHistorySize = 0;
+    char* positioning = nullptr;
+    float distanceToNextSensor = 0;
+    float responseTime = 0;
+    bool remoteConnection = 0;
+    string criticalSituation = "";
+    bool interconnectionWithOtherSensors = 0;
+    Profile profile;
+public:
+    friend class SmartHome;
+    //DEFAULT constructor
+    Sensor() :id(counter++), s_a_c(0), Device() {
+        this->positioning = new char[strlen("No name") + 1];
+        strcpy_s(this->positioning, strlen("No name") + 1, "No name");
+    }
+    //copy constructor
+    Sensor(const Sensor& sensor) :id(counter++), s_a_c(0), Device(sensor) {
+        this->interactionCount = sensor.interactionCount;
+        this->resetCount = sensor.resetCount;
+        this->lifespan = sensor.lifespan;
+        this->dataHistorySize = sensor.dataHistorySize;
+        if (this->dataHistory != nullptr)
+            delete[] this->dataHistory;
+        this->dataHistory = new int[sensor.dataHistorySize];
+        for (int i = 0; i < this->dataHistorySize; i++) {
+            this->dataHistory[i] = sensor.dataHistory[i];
+        }
+        if (this->positioning != nullptr)
+            delete[] this->positioning;
+        this->positioning = new char[strlen(sensor.positioning) + 1];
+        strcpy_s(this->positioning, strlen(sensor.positioning) + 1, sensor.positioning);
+        this->distanceToNextSensor = sensor.distanceToNextSensor;
+        this->responseTime = sensor.responseTime;
+        this->remoteConnection = sensor.remoteConnection;
+        this->criticalSituation = sensor.criticalSituation;
+        this->interconnectionWithOtherSensors = sensor.interconnectionWithOtherSensors;
+        this->profile = sensor.profile;
+    }
+    //constructor with parameters
+    Sensor(int interactionCount, int resetCount, int lifespan, int* dataHistory, int dataHistorySize, char* positioning, float distanceToNextSensor, float responseTime, bool remoteConnection, string criticalSituation, bool interconnectionWithOtherSensors, int manufacturingYear, float price) :id(counter++), s_a_c(0), Device(manufacturingYear, price) {
+        if (interactionCount <= 0)
+            throw new exception("You have entered a negative number of interactions");
+        if (resetCount <= 0)
+            throw new exception("You have entered a negative number of resets");
+        if (lifespan <= 0)
+            throw new exception("You have entered a negative lifespan");
+        if (dataHistory == nullptr)
+            throw new exception("Assign a non-null pointer");
+        if (dataHistorySize <= 0)
+            throw new exception("You have entered a negative size");
+        if (positioning == nullptr)
+            throw new exception("Assign a non-null pointer");
+        if (distanceToNextSensor <= 0)
+            throw new exception("You have entered a negative distance to the next sensor");
+        if (responseTime <= 0)
+            throw new exception("You have entered a negative response time");
+        if (criticalSituation.length() <= 0)
+            throw new exception("Please enter an existing string");
+        this->interactionCount = interactionCount;
+        this->resetCount = resetCount;
+        this->lifespan = lifespan;
+        this->dataHistorySize = dataHistorySize;
+        this->dataHistory = new int[dataHistorySize];
+        for (int i = 0; i < dataHistorySize; i++) {
+            this->dataHistory[i] = dataHistory[i];
+        }
+        this->positioning = new char[strlen(positioning) + 1];
+        strcpy_s(this->positioning, strlen(positioning) + 1, positioning);
+        this->distanceToNextSensor = distanceToNextSensor;
+        this->responseTime = responseTime;
+        this->remoteConnection = remoteConnection;
+        this->criticalSituation = criticalSituation;
+        this->interconnectionWithOtherSensors = interconnectionWithOtherSensors;
+        Profile p;
+        this->profile = p;
+    }
 
-void scriereProfilCasaInteligentaInCaleaFisieruluiIntrodusDeLaTastatura(CasaInteligenta& casainteligenta) {
-	string caleFisier;
-	cout << "Introduceti calea fisierului : "<<endl; cin >> caleFisier;
-	ofstream file(caleFisier, ios::out);
-	if (!file.is_open()) {
-		cout << endl << "Nu exista fisierul cu calea : " << caleFisier;
-	}
-	else {
-		Senzor** senzori = new Senzor*[casainteligenta.getnumarSenzori()];
-		for (int i = 0; i < casainteligenta.getnumarSenzori(); i++) {
-			senzori[i] = casainteligenta.gettotalitateSenzori()[i];
-		}
-		Profil* profile = new Profil[casainteligenta.getnumarSenzori()];
-		for (int i = 0; i < casainteligenta.getnumarSenzori(); i++) {
-			profile[i] = senzori[i]->getprofil();
-		}
-		file << "Numar Senzori : " << casainteligenta.getnumarSenzori() << endl << endl << endl;
-		for (int i = 0; i < casainteligenta.getnumarSenzori(); i++) {
-			file << "Profil Senzor " << i << " : ";
-			file << profile[i];
-		}
-		file << endl;
-		file << "Rating Casa Inteligenta : " << casainteligenta.getrating();
-		delete[]senzori;
-		delete[]profile;
-		file.close();
-	}
-}
-void exceptieDacaSenzorulNuApartineSistemuluiIoT(Senzor* senzor) {
-	if (senzor->gets_a_c() == 0)
-		throw new exception("Senzorul nu face parte din sistemul IoT !");
-}
-float stabilireRatingIntermediarSenzor(Senzor& senzor) {
-	Profil profil = senzor.getprofil();
-	float ratingIntermediar = 0;
-	if (profil.gettipRetea(0) == 's' && profil.getclasa(0) == 'm' && profil.getgarantie() > 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 10;
-	else if (profil.gettipRetea(0) == 's' && profil.getclasa(0) == 'm' && profil.getgarantie() > 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 9.8;
-	else if (profil.gettipRetea(0) == 's' && profil.getclasa(0) == 'm' && profil.getgarantie() < 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 9.6;
-	else if (profil.gettipRetea(0) == 's' && profil.getclasa(0) == 's' && profil.getgarantie() > 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 9.4;
-	else if (profil.gettipRetea(0) == 's' && profil.getclasa(0) == 'm' && profil.getgarantie() < 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 9.2;
-	else if (profil.gettipRetea(0) == 's' && profil.getclasa(0) == 's' && profil.getgarantie() > 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 9;
-	else if (profil.gettipRetea(0) == 's' && profil.getclasa(0) == 's' && profil.getgarantie() < 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 8.8;
-	else if (profil.gettipRetea(0) == 's' && profil.getclasa(0) == 's' && profil.getgarantie() < 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 8.6;
-	else if (profil.gettipRetea(0) == 'a' && profil.getclasa(0) == 'm' && profil.getgarantie() > 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 8.4;
-	else if (profil.gettipRetea(0) == 'a' && profil.getclasa(0) == 'm' && profil.getgarantie() > 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 8.2;
-	else if (profil.gettipRetea(0) == 'a' && profil.getclasa(0) == 'm' && profil.getgarantie() < 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 8;
-	else if (profil.gettipRetea(0) == 'a' && profil.getclasa(0) == 's' && profil.getgarantie() > 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 7.8;
-	else if (profil.gettipRetea(0) == 'a' && profil.getclasa(0) == 'm' && profil.getgarantie() < 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 7.6;
-	else if (profil.gettipRetea(0) == 'a' && profil.getclasa(0) == 's' && profil.getgarantie() > 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 7.4;
-	else if (profil.gettipRetea(0) == 'a' && profil.getclasa(0) == 's' && profil.getgarantie() < 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 7.2;
-	else if (profil.gettipRetea(0) == 'a' && profil.getclasa(0) == 's' && profil.getgarantie() < 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 7;
-	else if (profil.gettipRetea(0) == 'p' && profil.getclasa(0) == 'm' && profil.getgarantie() > 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 6.8;
-	else if (profil.gettipRetea(0) == 'p' && profil.getclasa(0) == 'm' && profil.getgarantie() > 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 6.6;
-	else if (profil.gettipRetea(0) == 'p' && profil.getclasa(0) == 'm' && profil.getgarantie() < 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 6.4;
-	else if (profil.gettipRetea(0) == 'p' && profil.getclasa(0) == 's' && profil.getgarantie() > 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 6.2;
-	else if (profil.gettipRetea(0) == 'p' && profil.getclasa(0) == 'm' && profil.getgarantie() < 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 6;
-	else if (profil.gettipRetea(0) == 'p' && profil.getclasa(0) == 's' && profil.getgarantie() > 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 5.8;
-	else if (profil.gettipRetea(0) == 'p' && profil.getclasa(0) == 's' && profil.getgarantie() < 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 5.6;
-	else if (profil.gettipRetea(0) == 'p' && profil.getclasa(0) == 's' && profil.getgarantie() < 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 5.4;
-	else if (profil.gettipRetea(0) == 'c' && profil.getclasa(0) == 'm' && profil.getgarantie() > 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 5.2;
-	else if (profil.gettipRetea(0) == 'c' && profil.getclasa(0) == 'm' && profil.getgarantie() > 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 5;
-	else if (profil.gettipRetea(0) == 'c' && profil.getclasa(0) == 'm' && profil.getgarantie() < 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 4.8;
-	else if (profil.gettipRetea(0) == 'c' && profil.getclasa(0) == 's' && profil.getgarantie() > 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 4.6;
-	else if (profil.gettipRetea(0) == 'c' && profil.getclasa(0) == 'm' && profil.getgarantie() < 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 4.4;
-	else if (profil.gettipRetea(0) == 'c' && profil.getclasa(0) == 's' && profil.getgarantie() > 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 4.2;
-	else if (profil.gettipRetea(0) == 'c' && profil.getclasa(0) == 's' && profil.getgarantie() < 20 && profil.getwaterproof() == 1)
-		ratingIntermediar = 4;
-	else if (profil.gettipRetea(0) == 'c' && profil.getclasa(0) == 's' && profil.getgarantie() < 20 && profil.getwaterproof() == 0)
-		ratingIntermediar = 3.8;
-	else
-		ratingIntermediar = 0;
-	return ratingIntermediar;
+    //operator= overload
+    Sensor operator=(const Sensor& sensor) {
+        Device::operator=(sensor);
+        this->profile = sensor.profile;
+        this->interactionCount = sensor.interactionCount;
+        this->resetCount = sensor.resetCount;
+        this->lifespan = sensor.lifespan;
+        this->dataHistorySize = sensor.dataHistorySize;
+        if (this->dataHistory != nullptr)
+            delete[] this->dataHistory;
+        this->dataHistory = new int[sensor.dataHistorySize];
+        for (int i = 0; i < this->dataHistorySize; i++) {
+            this->dataHistory[i] = sensor.dataHistory[i];
+        }
+        if (this->positioning != nullptr)
+            delete[] this->positioning;
+        this->positioning = new char[strlen(sensor.positioning) + 1];
+        strcpy_s(this->positioning, strlen(sensor.positioning) + 1, sensor.positioning);
+        this->distanceToNextSensor = sensor.distanceToNextSensor;
+        this->responseTime = sensor.responseTime;
+        this->remoteConnection = sensor.remoteConnection;
+        this->criticalSituation = sensor.criticalSituation;
+        this->interconnectionWithOtherSensors = sensor.interconnectionWithOtherSensors;
+        return *this;
+    }
+    //operator<< overload
+    friend ostream& operator<<(ostream& out, const Sensor& sensor) {
+        out << "ID: " << sensor.id << " ; number of interactions: " << sensor.interactionCount << "; number of resets: " << sensor.resetCount << "; lifespan:" << sensor.lifespan << "; data history size:" << sensor.dataHistorySize << "; distance to the next sensor:" << sensor.distanceToNextSensor << "; response time: " << sensor.responseTime << "; remote connection: " << sensor.remoteConnection << "; critical situation:" << sensor.criticalSituation << "; interconnection with other sensors: " << sensor.interconnectionWithOtherSensors << endl;
+        out << "Data history : ";
+        if (sensor.dataHistorySize != 0) {
+            for (int i = 0; i < sensor.dataHistorySize; i++) {
+                out << sensor.dataHistory[i];
+            }
+        }
+        else
+            out << "We do not have data history";
+        out << endl << "Sensor positioning : ";
+        if (sensor.positioning != nullptr) {
+            for (int i = 0; i < strlen(sensor.positioning); i++) {
+                out << sensor.positioning[i];
+            }
+        }
+        else
+            out << "We do not have positioning";
+        out << (Device&)sensor;
+        out << sensor.profile << endl << endl;
+        return out;
+    }
+    //operator>> overload
+    friend istream& operator>>(istream& in, Sensor& sensor) {
+        cout << "number of interactions: ";
+        in >> sensor.interactionCount;
+        cout << "number of resets: ";
+        in >> sensor.resetCount;
+        cout << "lifespan:";
+        in >> sensor.lifespan;
+        cout << "data history size:";
+        in >> sensor.dataHistorySize;
+        cout << "distance to the next sensor:";
+        in >> sensor.distanceToNextSensor;
+        cout << "response time : ";
+        in >> sensor.responseTime;
+        cout << "remote connection : ";
+        in >> sensor.remoteConnection;
+        cout << "critical situation : ";
+        in >> sensor.criticalSituation;
+        cout << "interconnection with other sensors : ";
+        in >> sensor.interconnectionWithOtherSensors;
+        if (sensor.dataHistory != nullptr)
+            delete[] sensor.dataHistory;
+        sensor.dataHistory = new int[sensor.dataHistorySize];
+        for (int i = 0; i < sensor.dataHistorySize; i++) {
+            cout << "Enter code " << i << ": ";
+            in >> sensor.dataHistory[i];
+        }
+        int positioningSize;
+        cout << "Enter the size of the positioning array : ";
+        cin >> positioningSize;
+        if (sensor.positioning != nullptr)
+            delete[] sensor.positioning;
+        sensor.positioning = new char[positioningSize + 1];
+        for (int i = 0; i < positioningSize; i++) {
+            cout << "Enter position " << i << "/" << positioningSize;
+            in >> sensor.positioning[i];
+        }
+        sensor.positioning[positioningSize] = '\0';
+        in >> (Device&)sensor;
+        return in;
+    }
+    //ifstream& operator>> overload
+    friend ifstream& operator>>(ifstream& in, Sensor& sensor) {
+        in >> sensor.interactionCount;
+        in >> sensor.resetCount;
+        in >> sensor.lifespan;
+        in >> sensor.dataHistorySize;
+        in >> sensor.distanceToNextSensor;
+        in >> sensor.responseTime;
+        in >> sensor.remoteConnection;
+        in >> sensor.criticalSituation;
+        in >> sensor.interconnectionWithOtherSensors;
+        if (sensor.dataHistory != nullptr)
+            delete[] sensor.dataHistory;
+        sensor.dataHistory = new int[sensor.dataHistorySize];
+        for (int i = 0; i < sensor.dataHistorySize; i++) {
+            in >> sensor.dataHistory[i];
+        }
+        int positioningSize;
+        in >> positioningSize;
+        if (sensor.positioning != nullptr)
+            delete[] sensor.positioning;
+        sensor.positioning = new char[positioningSize + 1];
+        for (int i = 0; i < positioningSize; i++) {
+            in >> sensor.positioning[i];
+        }
+        sensor.positioning[positioningSize] = '\0';
+        in >> (Device&)sensor;
+        return in;
+    }
+    //operator+ overload
+    Sensor operator+(const Sensor& sensor) {
+        Sensor s = *this;
+        s.lifespan = this->lifespan + sensor.lifespan;
+        return s;
+    }
+    //operator- overload
+    Sensor operator-(const Sensor& sensor) {
+        Sensor s = *this;
+        if (sensor.lifespan > this->lifespan)
+            s.lifespan = sensor.lifespan - this->lifespan;
+        else
+            s.lifespan = this->lifespan - sensor.lifespan;
+        return s;
+    }
+    //operator/ overload
+    Sensor operator/(const Sensor& sensor) {
+        Sensor s = *this;
+        s.distanceToNextSensor = this->distanceToNextSensor / sensor.distanceToNextSensor;
+        return s;
+    }
+    //operator++ - post overload
+    Sensor operator++(int) {
+        Sensor temp = *this;
+        this->lifespan++;
+        return temp;
+    }
+    //operator++ - pre overload
+    Sensor operator++() {
+        this->lifespan++;
+        return *this;
+    }
 
+    //DESTRUCTOR
+    ~Sensor() {
+        if (this->positioning != nullptr)
+            delete[] this->positioning;
+        if (this->dataHistory != nullptr)
+            delete[] this->dataHistory;
+    }
+    //getters
+    int getDataHistorySize() {
+        return this->dataHistorySize;
+    }
+    int getId() {
+        return this->id;
+    }
+    bool getS_a_c() {
+        return this->s_a_c;
+    }
+    int* getDataHistory() {
+        if (this->dataHistory != nullptr)
+            return this->dataHistory;
+        else
+            throw new exception("Null pointer");
+    }
+    int getInteractionCount() {
+        return this->interactionCount;
+    }
+    int getResetCount() {
+        return this->resetCount;
+    }
+    int getLifespan() {
+        return this->lifespan;
+    }
+    char* getPositioning() {
+        return this->positioning;
+    }
+    char getPositioning(int index) {
+        if (this->positioning != nullptr)
+            return this->positioning[index];
+        else {
+            throw "We do not have positioning!";
+        }
+    }
+    float getDistanceToNextSensor() {
+        return this->distanceToNextSensor;
+    }
+    float getResponseTime() {
+        return this->responseTime;
+    }
+    bool getRemoteConnection() {
+        return this->remoteConnection;
+    }
+    string getCriticalSituation() {
+        return this->criticalSituation;
+    }
+    bool getInterconnectionWithOtherSensors() {
+        return this->interconnectionWithOtherSensors;
+    }
+    Profile getProfile() {
+        return this->profile;
+    }
+    //setters
+    void setDataHistory(int* dataHistory) {
+        if (dataHistory != nullptr)
+            this->dataHistory = dataHistory;
+        else
+            throw new exception("Assign a non-null pointer");
+    }
+    void setDataHistorySize(int dataHistorySize) {
+        if (dataHistorySize > 0)
+            this->dataHistorySize = dataHistorySize;
+        else
+            throw new exception("You have entered a negative size");
+    }
+    void setInteractionCount(int interactionCount) {
+        if (interactionCount > 0)
+            this->interactionCount = interactionCount;
+        else
+            throw new exception("You have entered a negative number of interactions");
+    }
+    void setResetCount(int resetCount) {
+        if (resetCount > 0)
+            this->resetCount = resetCount;
+        else
+            throw new exception("You have entered a negative number of resets");
+    }
+    void setLifespan(int lifespan) {
+        if (lifespan > 0)
+            this->lifespan = lifespan;
+        else
+            throw new exception("You have entered a negative lifespan");
+    }
+    void setPositioning(char* positioning) {
+        if (strlen(positioning) > 0)
+            this->positioning = positioning;
+        else
+            throw new exception("Assign a non-null pointer");
+    }
+    void setDistanceToNextSensor(float distanceToNextSensor) {
+        if (distanceToNextSensor > 0)
+            this->distanceToNextSensor = distanceToNextSensor;
+        else
+            throw new exception("You have entered a negative distance to the next sensor");
+    }
+    void setResponseTime(float responseTime) {
+        if (responseTime > 0)
+            this->responseTime = responseTime;
+        else
+            throw new exception("You have entered a negative response time");
+    }
+    void setRemoteConnection(bool remoteConnection) {
+        this->remoteConnection = remoteConnection;
+    }
+    void setCriticalSituation(const string& criticalSituation) {
+        if (criticalSituation.length() > 0)
+            this->criticalSituation = criticalSituation;
+        else
+            throw new exception("Please enter an existing string");
+    }
+    void setInterconnectionWithOtherSensors(bool interconnectionWithOtherSensors) {
+        this->interconnectionWithOtherSensors = interconnectionWithOtherSensors;
+    }
+    void setProfile(const Profile& profile) {
+        this->profile = profile;
+    }
+    string emittedSound() {
+        return "bipbip";
+    }
+};
+
+class SmartHome {
+private:
+    int sensorCount;
+    Sensor** allSensors;
+    float Rating = 0;
+public:
+    static void correctS_a_c(Sensor** s, int size) {
+        if (s != nullptr) {
+            for (int i = 0; i < size; i++) {
+                if (s[i] != nullptr) {
+                    s[i]->s_a_c = 1;
+                }
+                else
+                    throw new exception("The array contains a null sensor");
+            }
+        }
+        else
+            throw new exception("The array does not contain sensors!");
+    }
+    //getters
+    float getRating() {
+        return this->Rating;
+    }
+    int getSensorCount() {
+        return this->sensorCount;
+    }
+    Sensor** getAllSensors() {
+        if (this->allSensors != nullptr)
+            return this->allSensors;
+        else
+            throw new exception("The smart home does not contain sensors!");
+    }
+    //setters
+    void setRating(float Rating) {
+        if (Rating > 0)
+            this->Rating = Rating;
+        else
+            throw new exception("You have entered a negative rating");
+    }
+    void setSensorCount(int sensorCount) {
+        if (sensorCount > 0) {
+            if (sensorCount < this->sensorCount) {
+                Sensor** newSensors;
+                newSensors = new Sensor * [this->sensorCount];
+                for (int i = 0; i < this->sensorCount; i++) {
+                    newSensors[i] = this->allSensors[i];
+                }
+                delete[] this->allSensors;
+                int a = this->sensorCount;
+                this->sensorCount = sensorCount;
+                this->allSensors = new Sensor * [sensorCount];
+                for (int i = 0; i < this->sensorCount; i++) {
+                    this->allSensors[i] = newSensors[i];
+                }
+                delete[] newSensors;
+            }
+            else if (sensorCount > this->sensorCount) {
+                Sensor** newSensors;
+                newSensors = new Sensor * [this->sensorCount];
+                for (int i = 0; i < this->sensorCount; i++) {
+                    newSensors[i] = this->allSensors[i];
+                }
+                delete[] this->allSensors;
+                int a = this->sensorCount;
+                this->sensorCount = sensorCount;
+                this->allSensors = new Sensor * [sensorCount];
+                for (int i = 0; i < this->sensorCount; i++) {
+                    this->allSensors[i] = new Sensor();
+                }
+                for (int i = 0; i < a; i++) {
+                    this->allSensors[i] = newSensors[i];
+                }
+                delete[] newSensors;
+            }
+            else
+                throw new exception("The array already has this size!");
+        }
+        else
+            throw new exception("You have entered a negative number of sensors");
+    }
+    void setAllSensors(Sensor** sensors) {
+        if (sensors != nullptr)
+            this->allSensors = sensors;
+        else
+            throw new exception("Please provide a non-null pointer");
+    }
+    //DEFAULT constructor
+    SmartHome() {
+        this->sensorCount = 0;
+        this->allSensors = nullptr;
+    }
+    //constructor with parameters
+    SmartHome(int sensorCount, Sensor** allSensors) {
+        if (sensorCount <= 0)
+            throw new exception("You have entered a negative number of sensors");
+        if (allSensors == nullptr)
+            throw new exception("Please provide a non-null pointer");
+        this->sensorCount = sensorCount;
+        this->allSensors = new Sensor*[sensorCount];
+        for (int i = 0; i < sensorCount; i++) {
+            this->allSensors[i] = allSensors[i];
+        }
+        // s_a_c change
+        for (int i = 0; i < sensorCount; i++) {
+            this->allSensors[i]->s_a_c = 1;
+        }
+    }
+    //copy constructor
+    SmartHome(const SmartHome& smartHome) {
+        this->sensorCount = smartHome.sensorCount;
+        this->allSensors = new Sensor*[smartHome.sensorCount];
+        for (int i = 0; i < this->sensorCount; i++) {
+            this->allSensors[i] = new Sensor();
+        }
+        for (int i = 0; i < smartHome.sensorCount; i++) {
+            *this->allSensors[i] = *smartHome.allSensors[i];
+        }
+        // s_a_c change
+        for (int i = 0; i < sensorCount; i++) {
+            this->allSensors[i]->s_a_c = 1;
+        }
+        this->Rating = smartHome.Rating;
+    }
+    //operator= overload
+    SmartHome operator=(const SmartHome& smartHome) {
+        if (this->allSensors != nullptr) {
+            delete[] this->allSensors;
+        }
+        this->sensorCount = smartHome.sensorCount;
+        this->allSensors = new Sensor*[smartHome.sensorCount];
+        for (int i = 0; i < this->sensorCount; i++) {
+            this->allSensors[i] = new Sensor();
+        }
+        for (int i = 0; i < smartHome.sensorCount; i++) {
+            *this->allSensors[i] = *smartHome.allSensors[i];
+        }
+        // s_a_c change
+        for (int i = 0; i < sensorCount; i++) {
+            this->allSensors[i]->s_a_c = 1;
+        }
+        this->Rating = smartHome.Rating;
+        return *this;
+    }
+    //operator<< overload
+    friend ostream& operator<<(ostream& out, const SmartHome& smartHome) {
+        out << "Number of sensors in the smart home : " << smartHome.sensorCount << endl;
+        for (int i = 0; i < smartHome.sensorCount; i++) {
+            out << "Sensor " << i + 1 << " :" << endl;
+            out << *smartHome.allSensors[i];
+        }
+        out << endl << "Smart Home Rating: " << smartHome.Rating << endl;
+        return out;
+    }
+    //operator>> overload
+    friend istream& operator>>(istream& in, SmartHome& smartHome) {
+        cout << "Enter number of sensors : ";
+        in >> smartHome.sensorCount;
+        if (smartHome.allSensors != nullptr) {
+            delete[] smartHome.allSensors;
+        }
+        smartHome.allSensors = new Sensor*[smartHome.sensorCount];
+        for (int i = 0; i < smartHome.sensorCount; i++) {
+            smartHome.allSensors[i] = new Sensor();
+        }
+        for (int i = 0; i < smartHome.sensorCount; i++) {
+            cout << "Enter sensor " << i << " :" << endl;
+            in >> *smartHome.allSensors[i];
+        }
+        correctS_a_c(smartHome.allSensors, smartHome.sensorCount);
+        return in;
+    }
+    //ifstream& operator>> overload
+    friend ifstream& operator>>(ifstream& in, SmartHome& smartHome) {
+        in >> smartHome.sensorCount;
+        if (smartHome.allSensors != nullptr) {
+            delete[] smartHome.allSensors;
+        }
+        smartHome.allSensors = new Sensor*[smartHome.sensorCount];
+        for (int i = 0; i < smartHome.sensorCount; i++) {
+            smartHome.allSensors[i] = new Sensor();
+        }
+        for (int i = 0; i < smartHome.sensorCount; i++) {
+            in >> *smartHome.allSensors[i];
+        }
+        correctS_a_c(smartHome.allSensors, smartHome.sensorCount);
+        return in;
+    }
+    //operator++ - post overload
+    SmartHome operator++(int) {
+        SmartHome temp = *this;
+        for (int i = 0; i < this->sensorCount; i++) {
+            (*this->allSensors[i])++;
+        }
+        return temp;
+    }
+    //operator++ - pre overload
+    SmartHome operator++() {
+        for (int i = 0; i < this->sensorCount; i++) {
+            (*this->allSensors[i])++;
+        }
+        return *this;
+    }
+    //operator+ overload
+    SmartHome operator+(const SmartHome& smartHome) {
+        if (this->sensorCount >= smartHome.sensorCount) {
+            SmartHome home = *this;
+            for (int i = 0; i < smartHome.sensorCount; i++) {
+                *home.allSensors[i] = *this->allSensors[i] + *smartHome.allSensors[i];
+            }
+            return home;
+        }
+        else if (this->sensorCount < smartHome.sensorCount) {
+            SmartHome home = smartHome;
+            for (int i = 0; i < this->sensorCount; i++) {
+                *home.allSensors[i] = *this->allSensors[i] + *smartHome.allSensors[i];
+            }
+            return home;
+        }
+    }
+    //operator- overload
+    SmartHome operator-(const SmartHome& smartHome) {
+        if (this->sensorCount >= smartHome.sensorCount) {
+            SmartHome home = *this;
+            for (int i = 0; i < smartHome.sensorCount; i++) {
+                *home.allSensors[i] = *this->allSensors[i] - *smartHome.allSensors[i];
+            }
+            return home;
+        }
+        else if (this->sensorCount < smartHome.sensorCount) {
+            SmartHome home = smartHome;
+            for (int i = 0; i < this->sensorCount; i++) {
+                *home.allSensors[i] = *smartHome.allSensors[i] - *this->allSensors[i];
+            }
+            return home;
+        }
+    }
+    //operator/ overload
+    SmartHome operator/(const SmartHome& smartHome) {
+        if (this->sensorCount >= smartHome.sensorCount) {
+            SmartHome home = *this;
+            for (int i = 0; i < smartHome.sensorCount; i++) {
+                *home.allSensors[i] = *this->allSensors[i] / *smartHome.allSensors[i];
+            }
+            return home;
+        }
+        else if (this->sensorCount < smartHome.sensorCount) {
+            SmartHome home = smartHome;
+            for (int i = 0; i < this->sensorCount; i++) {
+                *home.allSensors[i] = *smartHome.allSensors[i] / *this->allSensors[i];
+            }
+            return home;
+        }
+    }
+    ~SmartHome() {
+        if (this->allSensors != nullptr) {
+            for (int i = 0; i < this->sensorCount; i++){
+                if (this->allSensors[i] != nullptr) {
+                    delete this->allSensors[i];
+                }
+            }
+            delete[] this->allSensors;
+        }
+    }
+};
+
+int  Sensor::counter = 1;
+
+// Writes the profile of the smart home sensors to the file path entered from the keyboard
+void writeSmartHomeProfileToFilePath(SmartHome& smartHome) {
+    string filePath;
+    cout << "Enter the file path : " << endl; cin >> filePath;
+    ofstream file(filePath, ios::out);
+    if (!file.is_open()) {
+        cout << endl << "The file does not exist at path : " << filePath;
+    }
+    else {
+        Sensor** sensors = new Sensor*[smartHome.getSensorCount()];
+        for (int i = 0; i < smartHome.getSensorCount(); i++) {
+            sensors[i] = smartHome.getAllSensors()[i];
+        }
+        Profile* profile = new Profile[smartHome.getSensorCount()];
+        for (int i = 0; i < smartHome.getSensorCount(); i++) {
+            profile[i] = sensors[i]->getProfile();
+        }
+        file << "Number of Sensors : " << smartHome.getSensorCount() << endl << endl << endl;
+        for (int i = 0; i < smartHome.getSensorCount(); i++) {
+            file << "Sensor Profile " << i << " : ";
+            file << profile[i];
+        }
+        file << endl;
+        file << "Smart Home Rating : " << smartHome.getRating();
+        delete[] sensors;
+        delete[] profile;
+        file.close();
+    }
 }
-void stabilireRatingCasaInteligenta(CasaInteligenta& casainteligenta) {
-	float suma = 0;
-	for (int i = 0; i < casainteligenta.getnumarSenzori(); i++) {
-		suma += stabilireRatingIntermediarSenzor(*casainteligenta.gettotalitateSenzori()[i]) / casainteligenta.getnumarSenzori();
-	}
-	if (suma == 0)
-		throw new exception("Senzorii casei inteligente nu au profilele realizate !");
-	casainteligenta.setrating(suma);
+
+// Throws an exception if the sensor does not belong to the IoT system
+void exceptionIfSensorNotInIoTSystem(Sensor* sensor) {
+    if (sensor->getS_a_c() == 0)
+        throw new exception("The sensor is not part of the IoT system!");
 }
-void stabilireProfilSenzor(Senzor& senzor) {
-	Profil profil;
-	if (senzor.getinterconectareCuAltiSenzori() == true)
-		profil.setclasa("monitorizare");
-	else
-		profil.setclasa("supraveghere");
-	float formula;
-	formula = (senzor.getdurataDeViata() + senzor.getnumarResetari()) / 2 + senzor.getnumarInteractiuni() / 4;
-	profil.setgarantie(formula);
-	if (senzor.getpozitionare(0) == 'b')
-		profil.setwaterproof(1);
-	else if (senzor.getpozitionare(0) == 'B')
-		profil.setwaterproof(1);
-	else
-		profil.setwaterproof(0);
-	if (senzor.getconectareaDeLaDistanta() && senzor.gettimpDeRaspuns() < 1)
-		profil.settipRetea("satelit");
-	else if (senzor.getconectareaDeLaDistanta() && senzor.gettimpDeRaspuns() >= 1)
-		profil.settipRetea("antena");
-	else if (!senzor.getconectareaDeLaDistanta() && senzor.gettimpDeRaspuns() < 1)
-		profil.settipRetea("peertopeer");
-	else
-		profil.settipRetea("cablu");
-	senzor.setprofil(profil);
+
+// Establishes an intermediate rating for a sensor
+float establishSensorIntermediateRating(Sensor& sensor) {
+    Profile profile = sensor.getProfile();
+    float intermediateRating = 0;
+    if (profile.getNetworkType(0) == 's' && profile.getCategory(0) == 'm' && profile.getWarranty() > 20 && profile.getWaterproof() == 1)
+        intermediateRating = 10;
+    else if (profile.getNetworkType(0) == 's' && profile.getCategory(0) == 'm' && profile.getWarranty() > 20 && profile.getWaterproof() == 0)
+        intermediateRating = 9.8;
+    else if (profile.getNetworkType(0) == 's' && profile.getCategory(0) == 'm' && profile.getWarranty() < 20 && profile.getWaterproof() == 1)
+        intermediateRating = 9.6;
+    else if (profile.getNetworkType(0) == 's' && profile.getCategory(0) == 's' && profile.getWarranty() > 20 && profile.getWaterproof() == 1)
+        intermediateRating = 9.4;
+    else if (profile.getNetworkType(0) == 's' && profile.getCategory(0) == 'm' && profile.getWarranty() < 20 && profile.getWaterproof() == 0)
+        intermediateRating = 9.2;
+    else if (profile.getNetworkType(0) == 's' && profile.getCategory(0) == 's' && profile.getWarranty() > 20 && profile.getWaterproof() == 0)
+        intermediateRating = 9;
+    else if (profile.getNetworkType(0) == 's' && profile.getCategory(0) == 's' && profile.getWarranty() < 20 && profile.getWaterproof() == 1)
+        intermediateRating = 8.8;
+    else if (profile.getNetworkType(0) == 's' && profile.getCategory(0) == 's' && profile.getWarranty() < 20 && profile.getWaterproof() == 0)
+        intermediateRating = 8.6;
+    else if (profile.getNetworkType(0) == 'a' && profile.getCategory(0) == 'm' && profile.getWarranty() > 20 && profile.getWaterproof() == 1)
+        intermediateRating = 8.4;
+    else if (profile.getNetworkType(0) == 'a' && profile.getCategory(0) == 'm' && profile.getWarranty() > 20 && profile.getWaterproof() == 0)
+        intermediateRating = 8.2;
+    else if (profile.getNetworkType(0) == 'a' && profile.getCategory(0) == 'm' && profile.getWarranty() < 20 && profile.getWaterproof() == 1)
+        intermediateRating = 8;
+    else if (profile.getNetworkType(0) == 'a' && profile.getCategory(0) == 's' && profile.getWarranty() > 20 && profile.getWaterproof() == 1)
+        intermediateRating = 7.8;
+    else if (profile.getNetworkType(0) == 'a' && profile.getCategory(0) == 'm' && profile.getWarranty() < 20 && profile.getWaterproof() == 0)
+        intermediateRating = 7.6;
+    else if (profile.getNetworkType(0) == 'a' && profile.getCategory(0) == 's' && profile.getWarranty() > 20 && profile.getWaterproof() == 0)
+        intermediateRating = 7.4;
+    else if (profile.getNetworkType(0) == 'a' && profile.getCategory(0) == 's' && profile.getWarranty() < 20 && profile.getWaterproof() == 1)
+        intermediateRating = 7.2;
+    else if (profile.getNetworkType(0) == 'a' && profile.getCategory(0) == 's' && profile.getWarranty() < 20 && profile.getWaterproof() == 0)
+        intermediateRating = 7;
+    else if (profile.getNetworkType(0) == 'p' && profile.getCategory(0) == 'm' && profile.getWarranty() > 20 && profile.getWaterproof() == 1)
+        intermediateRating = 6.8;
+    else if (profile.getNetworkType(0) == 'p' && profile.getCategory(0) == 'm' && profile.getWarranty() > 20 && profile.getWaterproof() == 0)
+        intermediateRating = 6.6;
+    else if (profile.getNetworkType(0) == 'p' && profile.getCategory(0) == 'm' && profile.getWarranty() < 20 && profile.getWaterproof() == 1)
+        intermediateRating = 6.4;
+    else if (profile.getNetworkType(0) == 'p' && profile.getCategory(0) == 's' && profile.getWarranty() > 20 && profile.getWaterproof() == 1)
+        intermediateRating = 6.2;
+    else if (profile.getNetworkType(0) == 'p' && profile.getCategory(0) == 'm' && profile.getWarranty() < 20 && profile.getWaterproof() == 0)
+        intermediateRating = 6;
+    else if (profile.getNetworkType(0) == 'p' && profile.getCategory(0) == 's' && profile.getWarranty() > 20 && profile.getWaterproof() == 0)
+        intermediateRating = 5.8;
+    else if (profile.getNetworkType(0) == 'p' && profile.getCategory(0) == 's' && profile.getWarranty() < 20 && profile.getWaterproof() == 1)
+        intermediateRating = 5.6;
+    else if (profile.getNetworkType(0) == 'p' && profile.getCategory(0) == 's' && profile.getWarranty() < 20 && profile.getWaterproof() == 0)
+        intermediateRating = 5.4;
+    else if (profile.getNetworkType(0) == 'c' && profile.getCategory(0) == 'm' && profile.getWarranty() > 20 && profile.getWaterproof() == 1)
+        intermediateRating = 5.2;
+    else if (profile.getNetworkType(0) == 'c' && profile.getCategory(0) == 'm' && profile.getWarranty() > 20 && profile.getWaterproof() == 0)
+        intermediateRating = 5;
+    else if (profile.getNetworkType(0) == 'c' && profile.getCategory(0) == 'm' && profile.getWarranty() < 20 && profile.getWaterproof() == 1)
+        intermediateRating = 4.8;
+    else if (profile.getNetworkType(0) == 'c' && profile.getCategory(0) == 's' && profile.getWarranty() > 20 && profile.getWaterproof() == 1)
+        intermediateRating = 4.6;
+    else if (profile.getNetworkType(0) == 'c' && profile.getCategory(0) == 'm' && profile.getWarranty() < 20 && profile.getWaterproof() == 0)
+        intermediateRating = 4.4;
+    else if (profile.getNetworkType(0) == 'c' && profile.getCategory(0) == 's' && profile.getWarranty() > 20 && profile.getWaterproof() == 0)
+        intermediateRating = 4.2;
+    else if (profile.getNetworkType(0) == 'c' && profile.getCategory(0) == 's' && profile.getWarranty() < 20 && profile.getWaterproof() == 1)
+        intermediateRating = 4;
+    else if (profile.getNetworkType(0) == 'c' && profile.getCategory(0) == 's' && profile.getWarranty() < 20 && profile.getWaterproof() == 0)
+        intermediateRating = 3.8;
+    else
+        intermediateRating = 0;
+    return intermediateRating;
 }
-void stabilireProfilSenzoriCasaInteligenta(CasaInteligenta& casainteligenta) {
-	if (casainteligenta.gettotalitateSenzori() != nullptr) {
-		for (int i = 0; i < casainteligenta.getnumarSenzori(); i++) {
-			stabilireProfilSenzor(*casainteligenta.gettotalitateSenzori()[i]);
-		}
-	}
-	else
-		throw new exception("Casa inteligenta nu contine senzori!");
+
+// Establishes the rating of the smart home
+void establishSmartHomeRating(SmartHome& smartHome) {
+    float sum = 0;
+    for (int i = 0; i < smartHome.getSensorCount(); i++) {
+        sum += establishSensorIntermediateRating(*smartHome.getAllSensors()[i]) / smartHome.getSensorCount();
+    }
+    if (sum == 0)
+        throw new exception("The sensors of the smart home do not have completed profiles!");
+    smartHome.setRating(sum);
 }
-void citireCasaInteligentaDinFisier(CasaInteligenta& casainteligenta) {
-	ifstream fisier("SENZORI.txt", ios::in);
-	if (!fisier.is_open())
-		cout << endl << "Nu exista fisierul cu numele : senzori.txt";
-	else {
-		fisier >> casainteligenta;
-		fisier.close();
-	}
+
+// Establishes the profile of a sensor
+void establishSensorProfile(Sensor& sensor) {
+    Profile profile;
+    if (sensor.getInterconnectionWithOtherSensors() == true)
+        profile.setCategory("monitoring");
+    else
+        profile.setCategory("surveillance");
+    float formula;
+    formula = (sensor.getLifespan() + sensor.getResetCount()) / 2 + sensor.getInteractionCount() / 4;
+    profile.setWarranty(formula);
+    if (sensor.getPositioning(0) == 'b')
+        profile.setWaterproof(1);
+    else if (sensor.getPositioning(0) == 'B')
+        profile.setWaterproof(1);
+    else
+        profile.setWaterproof(0);
+    if (sensor.getRemoteConnection() && sensor.getResponseTime() < 1)
+        profile.setNetworkType("satellite");
+    else if (sensor.getRemoteConnection() && sensor.getResponseTime() >= 1)
+        profile.setNetworkType("antenna");
+    else if (!sensor.getRemoteConnection() && sensor.getResponseTime() < 1)
+        profile.setNetworkType("peertopeer");
+    else
+        profile.setNetworkType("cable");
+    sensor.setProfile(profile);
 }
-void exemplificareUtilitateFunctiiVirtuale(Senzor& senzor) {
-	Dispozitiv& dispozitiv = (Dispozitiv&)senzor;
-	cout << senzor.sunetEmis() << endl;
-	cout << dispozitiv.sunetEmis();
+
+// Establishes the profile for all sensors of the smart home
+void establishProfilesForSmartHomeSensors(SmartHome& smartHome) {
+    if (smartHome.getAllSensors() != nullptr) {
+        for (int i = 0; i < smartHome.getSensorCount(); i++) {
+            establishSensorProfile(*smartHome.getAllSensors()[i]);
+        }
+    }
+    else
+        throw new exception("The smart home does not contain sensors!");
 }
+
+// Reads the smart home from the "SENZORI.txt" file
+void readSmartHomeFromFile(SmartHome& smartHome) {
+    ifstream file("SENZORI.txt", ios::in);
+    if (!file.is_open())
+        cout << endl << "The file named : senzori.txt does not exist";
+    else {
+        file >> smartHome;
+        file.close();
+    }
+}
+
+// Shows how the virtual function is used
+void exampleOfVirtualFunctionUsage(Sensor& sensor) {
+    Device& device = (Device&)sensor;
+    cout << sensor.emittedSound() << endl;
+    cout << device.emittedSound();
+}
+
 void main() {
-	try {
-		int a = 2;
-		Senzor** s = new Senzor * [a];
-		s[0] =new Senzor(30, 40, 40, new int[3]{ 1,2,3 }, 3, new char[10]{ 'b','u','c','a','t','a','r','i','e' }, 0.2, 0.2, true, "lipsasemnal", true, 2022, 160.5);
-		s[1]=new Senzor(4, 4, 4, new int[4]{ 6 , 9 , 7 , 5 }, 4, new char[4]{ 'h' , 'o' , 'l' }, 4.3, 18.9, true, "lipsabaterie", false, 2005, 80.3);
-		//exceptieDacaSenzorulNuApartineSistemuluiIoT(s[0]);
-		CasaInteligenta casainteligenta(2, s);
-		//citireCasaInteligentaDinFisier(casainteligenta);
-		cin>>casainteligenta;
-		cout << casainteligenta;
-		stabilireProfilSenzoriCasaInteligenta(casainteligenta);
-		stabilireRatingCasaInteligenta(casainteligenta);
-		scriereProfilCasaInteligentaInCaleaFisieruluiIntrodusDeLaTastatura(casainteligenta);
-		//exceptieDacaSenzorulNuApartineSistemuluiIoT(s[0]);
-		//exemplificareUtilitateFunctiiVirtuale(*s[0]);
+    try {
+        int a = 2;
+        Sensor** s = new Sensor * [a];
+        s[0] = new Sensor(30, 40, 40, new int[3]{ 1,2,3 }, 3, new char[10]{ 'b','u','c','a','t','a','r','i','e' }, 0.2, 0.2, true, "nosignal", true, 2022, 160.5);
+        s[1] = new Sensor(4, 4, 4, new int[4]{ 6 , 9 , 7 , 5 }, 4, new char[4]{ 'h' , 'o' , 'l' }, 4.3, 18.9, true, "nobattery", false, 2005, 80.3);
+        //exceptionIfSensorNotInIoTSystem(s[0]);
+        SmartHome smartHome(2, s);
+        //readSmartHomeFromFile(smartHome);
+        cin >> smartHome;
+        cout << smartHome;
+        establishProfilesForSmartHomeSensors(smartHome);
+        establishSmartHomeRating(smartHome);
+        writeSmartHomeProfileToFilePath(smartHome);
+        //exceptionIfSensorNotInIoTSystem(s[0]);
+        //exampleOfVirtualFunctionUsage(*s[0]);
 
-		//Operatori<Senzor>s(2, new Senzor[2]{ *s[0],*s[1] });
-		if (s != nullptr) {
-			delete[]s;
-		}
-	}
-	catch (exception* exceptie) {
-		cout << exceptie->what();
-	}
-	catch (...) {
-		cout << "A intervenit o problema necunoscuta";
-	}
+        //Operators<Sensor> op(2, new Sensor[2]{ *s[0], *s[1] });
+        if (s != nullptr) {
+            delete[] s;
+        }
+    }
+    catch (exception* ex) {
+        cout << ex->what();
+    }
+    catch (...) {
+        cout << "An unknown problem occurred";
+    }
 }
