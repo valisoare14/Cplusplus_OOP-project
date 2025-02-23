@@ -1,4 +1,4 @@
-# C-OOP-project
+# IoT Application
 A C++ console application that manages sensor profiles in an IoT (Internet of Things) system.
 
 ## Technologies Used:
