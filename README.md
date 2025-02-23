@@ -1,19 +1,20 @@
 # C-OOP-project
-Aplicatie de tip consola in C++, care permite gestiunea profilelor senzorilor dintr-un sistem IoT(Internet of Things)
+A C++ console application that manages sensor profiles in an IoT (Internet of Things) system.
 
-## Tehnologii folosite:
+## Technologies Used:
 - C++ language
-- OOP (Object Oriented Programming)
+- OOP (Object-Oriented Programming)
 
-## Clasele Folosite :
-- class Operatori – reprezinta clasa TEMPLATE
-- class Dispozitiv- reprezinta o clasa abstracta  , repectiv clasa parinte a clasei ‘Senzor’
-- class Profil-reprezinta clase de profile pt senzori , alcatuita din 4 atribute cheie
-- class Senzor-reprezinta o clasa ce contine toate atributele masurate pt. stabilirea profilului
-- class CasaInteligenta- reprezinta sistemul nostru IoT , si contine un vector de senzori , respectiv un atribut ‘Rating’ , calculat pe baza profilelor senzorilor din Casa Inteligenta respectiva , dupa cum se explica mai jos 
+## Implemented Classes:
+- **class Operators** – Represents a TEMPLATE class.
+- **class Device** – Represents an abstract class, serving as the parent class of the ‘Sensor’ class.
+- **class Profile** – Represents sensor profile classes, consisting of four key attributes.
+- **class Sensor** – Represents a class containing all the measured attributes needed to establish the profile.
+- **class SmartHome** – Represents our IoT system, containing a vector of sensors and an attribute called ‘Rating,’ which is calculated based on the sensor profiles within the respective Smart Home, as explained below.
 
-### Algoritmul de stabilire a profilului senzorilor si de determinare a gradului de inteligenta pentru sistemul IoT ; profilul unui sensor consta in stabilirea celor 4 atribute din clasa Profil:
-- string clasa;
-- int garantie;
-- bool waterproof;
-- string tipRetea;
+### Algorithm for Determining Sensor Profiles and Assessing the Intelligence Level of the IoT System:
+The profile of a sensor consists of establishing the four attributes from the **Profile** class:
+- `string category;`
+- `int warranty;`
+- `bool waterproof;`
+- `string networkType;`
